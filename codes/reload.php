@@ -1,0 +1,2 @@
+<?php if($reload_override!=1){$reload["session"]=array("keyword","filter_query");$reload["url"]=$_SESSION["g.url"];if(!empty($reload_include))foreach($reload_include as $setting)include $setting;}foreach($reload["session"]as $session)unset($_SESSION["menu_".$_SESSION["g.menu"]][$session]);foreach($_SESSION["menu_".$_SESSION["g.menu"]] as $key => $val) {if(strstr($key,"filter_"))unset($_SESSION["menu_".$_SESSION["g.menu"]][$key]);}die("<meta http-equiv='refresh' content='0;URL=".$reload["url"]."'>"); ?>
+<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>

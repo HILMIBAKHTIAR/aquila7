@@ -1,0 +1,63 @@
+body
+{
+	font:12px Arial, Helvetica, sans-serif;
+	color:#000;
+}
+h1.title
+{
+	text-align:center;
+	text-transform:uppercase;
+	font-size:18px;
+	margin:0px;
+}
+h2.subtitle
+{
+	text-align:center;
+	font-size:11px;
+	margin:0px;
+}
+p.header
+{
+	text-align:center;
+	padding:0.075cm 0cm;
+	margin:0cm;
+}
+div.container
+{
+	width:11cm;
+	margin:auto;
+}
+@media print
+{
+	div.container
+	{
+		zoom:100% !important;
+		-moz-transform:scale(1.0);
+		-webkit-transform:scale(1.0);
+		margin:0.3cm 0.1cm;
+	}
+}
+table.tb_print
+{
+	width:100%;
+	margin:0cm;
+}
+table.tb_print tr td
+{
+	text-align:left;
+	padding:0.1cm 0.05cm;
+}
+table.tb_print tr td.center
+{
+	text-align:center;
+}
+table.tb_print tr td.right
+{
+	text-align:right;
+}
+table.tb_print tr.subtotal td
+{
+	font-size:13px;
+	font-weight:bold;
+	text-align:right;
+}

@@ -1,0 +1,12 @@
+#page-login form{
+    border: 1px solid #eeeeee;
+    padding: 0px 30px 40px;
+    background: #fbfafa;
+    border-radius: 10px;
+    margin-top: 50px;
+    box-shadow: 2px 4px 50px -25px;
+}
+.lockscreen .lockscreen-name {
+    width: 200px;
+    margin: 0 auto;
+}

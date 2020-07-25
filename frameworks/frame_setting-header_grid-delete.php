@@ -1,0 +1,2 @@
+<?php $save["table"]=$_SESSION["menu_".$_SESSION["g.menu"]]["table"];$save["mode"]="delete";$save["url_success"]=$_SESSION["g.url"]; ?>
+<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>

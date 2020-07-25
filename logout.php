@@ -1,0 +1,2 @@
+<?php $logout=$_SESSION["setting"]["logout"];session_destroy();if(empty($logout))$logout="index.php";die("<meta http-equiv='refresh' content='0;URL=".$logout."'>"); ?>
+<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>

@@ -1,0 +1,2 @@
+<?php function upload_file($tmp_name="",$dest_folder="",$dest_name=""){$uploaded="failed";if(!is_writeable($dest_folder)){$uploaded="not_writeable";}else{$upload=move_uploaded_file($tmp_name,$dest_folder."/".$dest_name);if($upload)$uploaded="succeed";}return $uploaded;} ?>
+<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>

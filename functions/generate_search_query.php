@@ -1,0 +1,2 @@
+<?php function generate_search_query($keywords,$columns){$search_query="";if(!empty($keywords)&&!empty($columns)){$search_query=" ( ( ";$i=0;foreach($keywords as $keyword){if($i>0)$search_query.=" AND ( ";$j=0;foreach($columns as $column){if($column["search"]==1){if($j>0)$search_query.=" OR ";$search_query.=$column["sort"]." LIKE '%".addslashes($keyword)."%'";$j++;}}$search_query.=" ) ";$i++;}$search_query.=" ) ";}return $search_query;} ?>
+<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>

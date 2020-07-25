@@ -1,0 +1,2 @@
+<?php function generate_grid_string($field,$grid,$mode=""){if(empty($mode))$mode="string";$h=0;foreach($grid as $g){if($mode=="string")$grid_string[$h]=$field[$g]["grid_set"]["id"];elseif($mode=="element")$grid_string[$h]="'#".$field[$g]["grid_set"]["id"]."_grid'";$h++;}return $grid_string;} ?>
+<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>

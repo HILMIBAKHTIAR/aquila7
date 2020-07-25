@@ -1,0 +1,2 @@
+<?php function generateENUM($tablename,$fieldname){$mhselectresult=str_replace("'","",mysqli_fetch_object(mysqli_query($con, "SELECT F_GETENUM('$tablename','$fieldname') AS data"))->data);$pieces=(explode(",",$mhselectresult));$arrayresult=array();for($x=0;$x<=count($pieces);$x++){if($pieces[$x]!=""){array_push($arrayresult,$pieces[$x]."|".$pieces[$x]);}}return $arrayresult;} ?>
+<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
