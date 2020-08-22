@@ -219,18 +219,18 @@ a.active .hamburger, a.active .hamburger:before, a.active .hamburger:after {
 }
 .sidebar-show #sidebar-left.col-sm-2 {
     display: block;
-    width: 65px;
+    width: 95px;
     opacity: 1;
     position: absolute;
 }
 .sidebar-show #sidebar-left:before, .sidebar-show #sidebar-left:after{
     position: fixed;
-    width: 65px;
+    width: 95px;
 }
 .sidebar-show #content.col-sm-10 {
-    margin-left: 65px;
+    margin-left: 95px;
     z-index: 0;
-    width: calc(100% - 65px);
+    width: calc(100% - 95px);
 }
 .sidebar-show .main-sidebar, .sidebar-show #sidebar-left{
     overflow: unset!important;
@@ -541,9 +541,6 @@ table td.center {
 .table-datatable {
     width: 100% !important;
 }
-.table-datatable > thead > tr{
-    border: none !important;
-}
 .table > caption + thead > tr:first-child > th, .table > colgroup + thead > tr:first-child > th, .table > thead:first-child > tr:first-child > th, .table > caption + thead > tr:first-child > td, .table > colgroup + thead > tr:first-child > td, .table > thead:first-child > tr:first-child > td {
     border: none;
 }
@@ -613,6 +610,12 @@ div.dataTables_scrollHead table.table-bordered {
 .dataTables_wrapper{
     padding-bottom: 15px !important;
 }
+.dataTables_scrollHead thead {
+    border-bottom: 1px solid black;
+}
+.dataTables_scrollBody thead, .dataTables_scrollBody tfoot{
+    visibility: collapse !important;
+}
 .dataTables_scrollBody > .table-datatable > thead {
     visibility: hidden !important;
 }
@@ -649,13 +652,22 @@ table.table-bordered.dataTable th {
     text-transform: uppercase;
     font-size: 13px;
 }
-table.table-bordered.dataTable th:first-child {
+/*table.table-bordered.dataTable tr th{
+    border: 1px solid black;
+}*/
+table.table-bordered.dataTable tr.even th{
+    background: white;
+}
+table.table-bordered.dataTable tr.even th.group{
+   border-bottom: 1px solid black;
+}
+table.table-bordered.dataTable th:first-child:empty {
     width: 1px;
 }
-table.table-bordered.dataTable td:first-child {
-    /*text-align: center;*/
+table.table-bordered.dataTable td:first-child:empty {
+    text-align: center;
 }
-.index table.table-bordered.dataTable th:first-child:before, .index table.table-bordered.dataTable th:first-child:after{
+.index table.table-bordered.dataTable th:first-child:empty:before, .index table.table-bordered.dataTable th:first-child:empty:after{
     display: none;
 }
 table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc_disabled:before, table.dataTable thead .sorting_desc_disabled:after {
@@ -707,7 +719,8 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
         width: 100%;
     }
 }
-@media (max-width: 768px){
+/*768*/
+@media (max-width: 990px){
     #breadcrumb {
         height: auto;
     }
@@ -1215,7 +1228,7 @@ a.show-sidebar:hover .hamburger{
     position: absolute;
     right: 0;
 }
-.ui-jqgrid .ui-jqgrid-htable th {
+.ui-jqgrid .ui-jqgrid-htable tr[role="rowheader"] th {
     padding: 7px 2px 5px 2px;
 }
 .ui-jqgrid .ui-jqgrid-htable th input[type="radio"], input[type="checkbox"] {
@@ -1502,7 +1515,6 @@ table.fixedHeader-floating.no-footer, table.fixedHeader-floating {
     border-radius: 0px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 }
-
 #sidebar-left::-webkit-scrollbar-thumb{
     background-color: #2E383C;
 }
@@ -1513,6 +1525,16 @@ table.fixedHeader-floating.no-footer, table.fixedHeader-floating {
 ul.dropdown-menu{
     display: none;
 }
+/*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
+.nav.main-menu > li > a, .nav.msg-menu > a, .main-menu .dropdown-menu > li > a {
+    margin: 5px;
+    border-radius: 5px!important;
+    white-space: normal;
+}
+.sidebar-show .nav.main-menu > li > a, .sidebar-show .nav.msg-menu > a, .sidebar-show .main-menu .dropdown-menu > li > a {
+    white-space: nowrap;
+}
+/*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
 @media (min-width: 501px){
     .nav.main-menu > li > a:hover span.tips{
         display: block;
@@ -1579,12 +1601,14 @@ li.open ul.dropdown-menu li a:hover {
         margin-left: 16.7%;
     }
 }
-@media (min-width: 768px){
+/*768*/
+@media (min-width: 990px){
     .dataTables_wrapper .col-sm-12.col-md-6{
         width: 50%;
     }
 }
-@media (max-width: 768px){
+/*768*/
+@media (max-width: 990px){
     .dt-buttons{
         left: 50%;
         transform:translateX(-50%);
@@ -1608,7 +1632,7 @@ li.open ul.dropdown-menu li a:hover {
     }
     .bt-search {
         right: 10px;
-        top: 15px;
+        top: 21px;
     }
 }
 @media (max-width: 500px){
@@ -1695,7 +1719,7 @@ li.open ul.dropdown-menu li a:hover {
         display: none!important;
     }
     .bt-search {
-        top: 25px;
+        top: 32px;
     }
     div.dataTables_wrapper div.dataTables_filter input:hover, div.dataTables_wrapper div.dataTables_filter input:focus {
         width: 100%!important;
@@ -2389,16 +2413,6 @@ li.open ul.dropdown-menu li a{
         position: absolute;
         left: calc(100% - 30px);*/
     }
-    /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
-    .nav.main-menu > li > a, .nav.msg-menu > a, .main-menu .dropdown-menu > li > a {
-        margin: 5px;
-        border-radius: 5px!important;
-        white-space: normal;
-    }
-    .sidebar-show .nav.main-menu > li > a, .sidebar-show .nav.msg-menu > a, .sidebar-show .main-menu .dropdown-menu > li > a {
-        white-space: nowrap;
-    }
-    /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
     .sidebar-show .nav.main-menu > li > a, .sidebar-show .nav.msg-menu > a, .sidebar-show .main-menu .dropdown-menu > li > a {
         border-radius: 0px!important;
     }
@@ -2839,7 +2853,8 @@ span.badges {
     /*overflow-y: hidden;*/
 }
 
-@media (max-width: 768px){
+/*768*/
+@media (max-width: 990px){
     .form-horizontal .control-label {
         text-align: left;
     }
@@ -3099,6 +3114,7 @@ span.badges {
 }
 ul.dropdown-menu {
     margin-left: 10px!important;
+    border-radius: 5px !important;
 }
 /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
 

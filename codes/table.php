@@ -15,24 +15,83 @@ $hide_class ="";
 if($index["ajax"] == 0) {
     $hide_class = "hide";
 }
-echo "\n<table class='table table-bordered table-striped table-hover table-datatable ".$hide_class."' id='table_" . $table["id"] . "'>\n\t<thead>\n\t\t<tr>";
+echo "\n<table class='table table-bordered table-striped table-hover table-datatable ".$hide_class."' id='table_" . $table["id"] . "'>\n\t<thead>\n\t\t";
 $length      = count($table["column"]);
 $column_numb = 0;
+foreach ($table["column"] as $key => $value) {
+    $table["column"][$key]["draw"]  = 0;
+}
+foreach ($table["colHeader"] as $key => $colHeader) {
+    $key % 2 == 1 ? $rowClass = "odd" : $rowClass = "even";
+    echo "<tr class= " . $rowClass . ">";
+    $startSpan = 0;
+    $endSpan = 0; 
+    $isColspan = 0;  
+    for ($i = 0; $i < sizeof($table["column"]); $i++) {
+        foreach ($colHeader as $colGroup) {
+            if($colGroup["name"] == $table["column"][$i]["name"]){   
+                if (!isset($colGroup["class"]))
+                        $colGroup["class"] = "";
+                echo "<th class='group " . $colGroup["class"] . "' colspan = ". $colGroup["colspan"] .">" .$colGroup["caption"] . "</th>";
+                $startSpan = $i;
+                $endSpan = $i + $colGroup["colspan"] - 1;
+                $isColspan = 1;
+            }
+        }
+        if($isColspan && ($i < $startSpan || $i > $endSpan))
+            $isColspan = 0; 
+        if(!$isColspan){
+            if(!$table["column"][$i]["draw"]){
+                $isBelowColspan = 0;
+                for ($r = $key + 1; $r < sizeof($table["colHeader"] ); $r++) {
+                    for ($k = 0 ; $k < sizeof($table["colHeader"][$r]); $k++){
+                        for ($l = 0; $l < sizeof($table["column"]); $l++) {
+                            if($table["colHeader"][$r][$k]["name"] == $table["column"][$l]["name"]){
+                                $startSpan = $l;
+                                $endSpan = $l + $table["colHeader"][$r][$k]["colspan"] - 1;
+                                if($i >= $startSpan && $i <= $endSpan){
+                                    echo "<th></th>";
+                                    $isBelowColspan = 1;
+                                    break 3;
+                                }
+
+                            }
+                        }
+                    }
+                }
+                if(!$isBelowColspan){
+                    $width = "";
+                    if (!empty($column["width"]))
+                        $width = " style='width:" . $table["column"][$i]["width"] . "px;' ";
+                    if (!isset($column["class"]))
+                            $table["column"][$key]["class"] = "";
+                    $rowspan = sizeof($table["colHeader"]) + 1 - $key;
+                    echo "<th rowspan = ".$rowspan . " " . $width . " class='col_header_numb_" . $column_numb . " col_header_name_" . $table["column"][$i]["name"] . " " . $table["column"][$i]["class"] . "'>" . $table["column"][$i]["caption"];
+                    $table["column"][$i]["draw"] = 1;
+                }
+            }
+        }
+        $column_numb++;
+    }
+    echo "</tr>";
+}
+echo "<tr>";
+$column_numb = 0;
 foreach ($table["column"] as $column) {
-    $width = "";
-    if (!empty($column["width"]))
-        $width = " style='width:" . $column["width"] . "px;' ";
-    if ($table["id"] == "index_report" && $width != "")
-        $width = " style='width:" . $column["width"] . "px!important;min-width:" . $column["width"] . "px!important;' ";
-    echo "<th " . $width . " class='col_header_numb_" . $column_numb . " col_header_name_" . $column["name"] . " " . $column["class"] . "'>" . $column["caption"];
-    if (empty($column["sort"]))
-        $column["sort"] = $column["name"];
-    if ($column["sort"] != "empty")
-        echo "<a href='" . $table["url"] . "&ob=" . $column["sort"] . "&ad=desc'><img src='" . $config["webspira"] . "assets_dashboard/img/sort-desc.png' style='float:right; width:16px;'></a><a href='" . $table["url"] . "&ob=" . $column["sort"] . "&ad=asc'><img src='" . $config["webspira"] . "assets_dashboard/img/sort-asc.png' style='float:right; width:16px;'></a>";
-    echo "</th>";
+    if (!$column["draw"]) {
+        $width = "";
+        if (!empty($column["width"]))
+            $width = " style='width:" . $column["width"] . "px;' ";
+        if ($table["id"] == "index_report" && $width != "")
+            $width = " style='width:" . $column["width"] . "px!important;min-width:" . $column["width"] . "px!important;' ";
+        echo "<th " . $width . " class='col_header_numb_" . $column_numb . " col_header_name_" . $column["name"] . " " . $column["class"] . "'>" . $column["caption"];
+        if (empty($column["sort"]))
+            $column["sort"] = $column["name"];
+        echo "</th>";
+    }
     $column_numb++;
 }
-echo "\n\t\t</tr>\n\t</thead>\n\t<tbody>";
+echo "\n\n\t</tr>\n\t</thead>\n\t<tbody>";
 
 if(isset($index["query_from"]) AND !empty($index["query_from"])){
     $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
@@ -44,10 +103,11 @@ if(isset($index["query_from"]) AND !empty($index["query_from"])){
         $i  = 0;
         $no = 0;
         while ($data = $result->fetch_assoc()) {
-            $index_table["data"][0]["action"] = "";
+            $index_table["data"][$i]["action"] = "";
+            $index_table["data"][$i]["break"] = "";
             include $index["data"];
-            if (!empty($index_table["data"][0]["break"]))
-                echo $index_table["data"][0]["break"];
+            if (!empty($index_table["data"][$i]["break"]))
+                echo $index_table["data"][$i]["break"];
             echo "<tr>";
             $column_numb = 0;
             foreach ($table["column"] as $column) {
@@ -59,7 +119,7 @@ if(isset($index["query_from"]) AND !empty($index["query_from"])){
                     $width = " style='width:" . $column["width"] . "px;' ";
                 if ($table["id"] == "index_report" && $width != "")
                     $width = " style='width:" . $column["width"] . "px!important;min-width:" . $column["width"] . "px!important;' ";
-                echo "<td " . $align . " " . $width . " class='col_detail_numb_" . $column_numb . " col_detail_name_" . $column["name"] . " " . $column["class"] . "'>" . $index_table["data"][0][$column["name"]] . "</td>";
+                echo "<td " . $align . " " . $width . " class='col_detail_numb_" . $column_numb . " col_detail_name_" . $column["name"] . " " . $column["class"] . "'>" . $index_table["data"][$i][$column["name"]] . "</td>";
                 $column_numb++;
             }
             echo "</tr>";

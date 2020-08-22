@@ -1,5 +1,5 @@
 <?php
-function formatting_code($con, $string_code = "", $date = "", $string_plus = "")
+function formatting_code($con, $string_code = "", $date = "", $string_plus = [])
 {    
     if (empty($string_code))
         return false;

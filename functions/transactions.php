@@ -15,9 +15,9 @@ function transactions($con, $mode = "", $message = "", $type = "", $die = "", $u
         if (empty($url))
             $url = "?m=" . $m . "&f=" . $f;
         if ($mode == "start") {
-            $autocommit_off = mysqli_query($con, "SET AUTOCOMMIT = 0;");
+            // $autocommit_off = mysqli_query($con, "SET AUTOCOMMIT = 0;");
             $start_transaction = mysqli_query($con, "START TRANSACTION;");
-            if (!$autocommit_off || !$start_transaction)
+            if (!$start_transaction)
                 set_alert($message, $type, $die, $url, $m, $f);
         } elseif ($mode == "commit") {
             $commit = mysqli_query($con, "COMMIT;");

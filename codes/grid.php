@@ -119,6 +119,7 @@ if ($grid["column_autoaddrow"] == 1) {
 } else
     $grid["option"]["colNames"] = "[" . $grid["option"]["colNames"] . "]";
 $grid["option"]["colModel"] = "automatic";
+$grid["option"]["shrinkToFit"] = "false";
 $grid_html                  = "";
 if (!empty($grid["pre_script"]))
     $grid_html .= $grid["pre_script"];
@@ -171,6 +172,51 @@ if ($grid["navgrid"] == 1) {
         $i++;
     }
     $grid_html .= "\n\t}, {}, {}, {}, {});";
+}
+$i = 0;
+if (array_key_exists('colHeader', $grid)) {
+    $i = 0;
+    $group_header_var .= "[";
+    foreach($grid["colHeader"] as $colHeader) {
+        if ($i != 0)
+            $group_header_var .= " , ";
+        $group_header_var .= "{";
+        $i1 = 0;
+        foreach($colHeader as $key => $val) {
+            if ($i1 != 0)
+                $group_header_var .= " , ";
+            if ($key != "groupHeaders")
+                $group_header_var .= " '" . $key . "' : " . $val . " ";
+            elseif ($key == "groupHeaders") {
+                $group_header_var .= " '" . $key . "' : [ ";
+                $i2 = 0;
+                foreach($colHeader["groupHeaders"] as $groupHeaders) {
+                    if ($i2 != 0)
+                        $group_header_var .= " , ";
+                    $group_header_var .= " { ";
+                    $i3 = 0;
+                    foreach($groupHeaders as $key => $val) {
+                        if ($i3 != 0)
+                            $group_header_var .= " , ";
+                        $group_header_var .= " '" . $key . "' : " . $val . " ";
+                        $i3++;
+                    }
+                    $group_header_var .= " } ";
+                    $i2++;
+                }
+                $group_header_var .= " ] ";
+            }
+            $i1++;
+        }
+        $i++;
+        $group_header_var .= " }";
+    }
+    $group_header_var .= "]";
+
+    $grid_html .= "\nvar groupHeaders = " . $group_header_var .";";
+    $grid_html .= "\nfor (var iRow = 0; iRow < groupHeaders.length; iRow++) {";
+    $grid_html .= "\n\tjQuery(" . $grid_id . "_element).jqGrid('setGroupHeaders', groupHeaders[iRow]);";    
+    $grid_html .= "\n}";
 }
 if (!empty($grid["post_dom"]))
     $grid_html .= $grid["post_dom"];

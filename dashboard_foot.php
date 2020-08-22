@@ -194,14 +194,14 @@
 	    var periode = periode;
 	    var header= header;
 	    var table_header = "", table_body = "", table_footer ="";
-	    if($('.table-datatable').children("thead").length > 0){
-	    	table_header = $('.table-datatable').children("thead").html().toString();
+	    if($('.dataTables_scrollHead .table-datatable').children("thead").length > 0){
+	    	table_header = $('.dataTables_scrollHead .table-datatable').children("thead").html().toString();
 	    }
-	    if($('.table-datatable').children("tbody").length > 0){
-	    	table_body = $('.table-datatable').children("tbody").html().toString();
+	    if($('.dataTables_scrollBody .table-datatable').children("tbody").length > 0){
+	    	table_body = $('.dataTables_scrollBody .table-datatable').children("tbody").html().toString();
 	    }
-	    if($('.table-datatable').children("tfoot").length > 0){
-	    	table_footer = $('.table-datatable').children("tfoot").html().toString();
+	    if($(' .dataTables_scrollFoot .table-datatable').children("tfoot").length > 0){
+	    	table_footer = $('.dataTables_scrollFoot .table-datatable').children("tfoot").html().toString();
 	    }
 	    var total_column = 99;
 	    var link = '<?php echo $_SESSION["g.menu"]?>';

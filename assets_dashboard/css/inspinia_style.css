@@ -102,7 +102,7 @@ h5 {
   z-index: 1000;
 }
 .dropdown-menu > li > a {
-  border-radius: 3px;
+  /*border-radius: 3px;*/
   color: inherit;
   line-height: 25px;
   margin: 4px;
@@ -2094,8 +2094,8 @@ div.dt-button-info {
   color: #676a6c;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
-.ui-widget-content {
-  box-sizing: content-box;
+.ui-widget-content: {
+  /*box-sizing: content-box;*/
 }
 .ui-icon-triangle-1-n {
   background-position: 1px -16px;

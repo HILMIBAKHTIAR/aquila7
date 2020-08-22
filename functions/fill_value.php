@@ -1,5 +1,5 @@
 <?php
-function fill_value($edit, $data)
+function fill_value($edit, $data = [])
 {
     $max = count($edit["field"]);
     for ($i = 0; $i < $max; $i++) {

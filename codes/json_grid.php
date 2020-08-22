@@ -97,7 +97,7 @@ if ($_SESSION["setting"]["environment"] != "live") {
             "\n",
             "\r",
             "\t"
-        ), " ", mysqli_error());
+        ), " ", mysqli_error($con));
     if ($count == 0)
         $response->debug_count = str_replace(array(
             "\n",

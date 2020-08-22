@@ -162,7 +162,7 @@ if ($save["mode"] == "add") {
     $debug_html .= "mysqli_query : " . $query . "<br /><br />";
     $save_action = mysqli_query($con, $query);
     if (!$save_action)
-        $debug_html .= "mysqli_query ERROR : " . mysqli_error() . "<br /><br />";
+        $debug_html .= "mysqli_query ERROR : " . mysqli_error($con) . "<br /><br />";
     if (empty($nomor)) {
         $nomor = mysqli_insert_id($con);
         $debug_html .= "mysqli_insert_id() = " . $nomor . "<br /><br />";
@@ -230,7 +230,7 @@ if ($save["mode"] == "add") {
                 $debug_html .= "mysqli_query : " . $query . "<br /><br />";
                 $insert_detail = mysqli_query($con, $query);
                 if (!$insert_detail) {
-                    $debug_html .= "mysqli_query failed : " . mysqli_error() . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
+                    $debug_html .= "mysqli_query failed : " . mysqli_error($con) . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
                     if ($save["debug"] == 1)
                         $_SESSION["g.debug_html"] .= $debug_html;
                     $_SESSION["g.debug0_html"] .= $debug_html;
@@ -240,6 +240,12 @@ if ($save["mode"] == "add") {
             }
         }
     }
+
+    transactions($con, "commit");
+    $debug_html .= "<br />transactions(commit);<br />";
+    transactions($con, "start");
+    $debug_html .= "<br />transactions(start);<br />";
+
     if (!empty($save["string_code"])) {
         $debug_html .= '$save[string_code] = ' . $save["string_code"] . "<br /><br />";
         if (!empty($_POST[$_SESSION["setting"]["field_tanggal"]])) {
@@ -253,11 +259,25 @@ if ($save["mode"] == "add") {
             else
                 $finalcode = formatting_code($con, $save["string_code"]);
         }
+        $duplicatecode = mysqli_num_rows(mysqli_query($con, "SELECT a." . $save["field_code"] . " FROM " . $save["table"] . " a WHERE a." . $_SESSION["setting"]["field_nomor"] . " <> 0 AND a." . $save["field_code"] . " LIKE '" . $finalcode . "%' FOR UPDATE"));
+        while ($duplicatecode > 0) {
+            $debug_html .= "Loop Generate Code <br /> <br />";
+            $_SESSION["g.debug0_html"] .= $debug_html;
+            $finalcode     = formatting_code($save["string_code"]);
+            $duplicatecode = mysqli_num_rows(mysqli_query($con, "SELECT a." . $save["field_code"] . " FROM " . $save["table"] . " a WHERE a." . $_SESSION["setting"]["field_nomor"] . " <> 0 AND a." . $save["field_code"] . " LIKE '" . $finalcode . "%' FOR UPDATE"));
+        }
         $query = "\n\t\tUPDATE " . $save["table"] . "\n\t\tSET " . $save["field_code"] . " = '" . $finalcode . "'\n\t\tWHERE " . $_SESSION["setting"]["field_nomor"] . " = " . $nomor;
         $debug_html .= "mysqli_query : " . $query . "<br /><br />";
         $update_finalcode = mysqli_query($con, $query);
-        if (!$update_finalcode)
-            $debug_html .= "mysqli_query ERROR : " . mysqli_error() . "<br /><br />";
+        if (!$update_finalcode){
+            $debug_html .= "mysqli_query failed : " . mysqli_error($con) . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
+            if ($save["debug"] == 1)
+                $_SESSION["g.debug_html"] .= $debug_html;
+            $finalcode = formatting_code($con, $save["string_code"]);
+            $query = "\n\t\tUPDATE " . $save["table"] . "\n\t\tSET " . $save["field_code"] . " = '" . $finalcode . "'\n\t\tWHERE " . $_SESSION["setting"]["field_nomor"] . " = " . $nomor;
+            $debug_html .= "mysqli_query : " . $query . "<br /><br />";
+            $update_finalcode = mysqli_query($con, $query);
+        }
     }
     if (!empty($save["sp_add"]) && !empty($save["sp_add_param"])) {
         $debug_html .= '$save[sp_add] = ' . $save["sp_add"] . ' && $save[sp_add_param] = ' . $save["sp_add_param"] . "<br />" . "transactions(commit);<br /><br />";
@@ -346,7 +366,7 @@ if ($save["mode"] == "add") {
     $debug_html .= "mysqli_query : " . $query . "<br /><br />";
     $save_action = mysqli_query($con, $query);
     if (!$save_action)
-        $debug_html .= "mysqli_query ERROR : " . mysqli_error() . "<br /><br />";
+        $debug_html .= "mysqli_query ERROR : " . mysqli_error($con) . "<br /><br />";
     $nomor     = $_GET["no"];
     $statement = "update";
     foreach ($save["detail"] as $detail) {
@@ -418,7 +438,7 @@ if ($save["mode"] == "add") {
                     $debug_html .= "mysqli_query : " . $query . "<br /><br />";
                     $update_detail = mysqli_query($con, $query);
                     if (!$update_detail) {
-                        $debug_html .= "mysqli_query failed : " . mysqli_error() . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
+                        $debug_html .= "mysqli_query failed : " . mysqli_error($con) . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
                         if ($save["debug"] == 1)
                             $_SESSION["g.debug_html"] .= $debug_html;
                         $_SESSION["g.debug0_html"] .= $debug_html;
@@ -489,7 +509,7 @@ if ($save["mode"] == "add") {
             $debug_html .= "mysqli_query : " . $query . "<br /><br />";
             $delete_detail = mysqli_query($con, $query);
             if (!$delete_detail) {
-                $debug_html .= "mysqli_query failed : " . mysqli_error() . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
+                $debug_html .= "mysqli_query failed : " . mysqli_error($con) . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
@@ -501,7 +521,7 @@ if ($save["mode"] == "add") {
                 $debug_html .= "mysqli_query : " . $query . "<br /><br />";
                 $insert_detail = mysqli_query($con, $query);
                 if (!$insert_detail) {
-                    $debug_html .= "mysqli_query failed : " . mysqli_error() . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
+                    $debug_html .= "mysqli_query failed : " . mysqli_error($con) . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
                     if ($save["debug"] == 1)
                         $_SESSION["g.debug_html"] .= $debug_html;
                     $_SESSION["g.debug0_html"] .= $debug_html;
@@ -518,7 +538,7 @@ if ($save["mode"] == "add") {
             $debug_html .= "mysqli_query : " . $query . "<br /><br />";
             $delete_detail = mysqli_query($con, $query);
             if (!$delete_detail) {
-                $debug_html .= "mysqli_query failed : " . mysqli_error() . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
+                $debug_html .= "mysqli_query failed : " . mysqli_error($con) . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
@@ -572,7 +592,7 @@ if ($save["mode"] == "add") {
     $debug_html .= "mysqli_query : " . $query . "<br /><br />";
     $save_action = mysqli_query($con, $query);
     if (!$save_action)
-        $debug_html .= "mysqli_query ERROR : " . mysqli_error() . "<br /><br />";
+        $debug_html .= "mysqli_query ERROR : " . mysqli_error($con) . "<br /><br />";
     $nomor     = $_GET["no"];
     $statement = "delete";
     if (!empty($save["sp_delete"]) && !empty($save["sp_delete_param"])) {
@@ -659,7 +679,7 @@ if ($save["mode"] == "add") {
         $debug_html .= "mysqli_query : " . $query . "<br /><br />";
         $save_action = mysqli_query($con, $query);
         if (!$save_action)
-            $debug_html .= "mysqli_query ERROR : " . mysqli_error() . "<br /><br />";
+            $debug_html .= "mysqli_query ERROR : " . mysqli_error($con) . "<br /><br />";
         $nomor     = $_GET["no"];
         $statement = "approve";
     }
@@ -710,7 +730,7 @@ if ($save["mode"] == "add") {
         $debug_html .= "mysqli_query : " . $query . "<br /><br />";
         $save_action = mysqli_query($con, $query);
         if (!$save_action)
-            $debug_html .= "mysqli_query ERROR : " . mysqli_error() . "<br /><br />";
+            $debug_html .= "mysqli_query ERROR : " . mysqli_error($con) . "<br /><br />";
         $nomor     = $_GET["no"];
         $statement = "reject";
     }
@@ -761,7 +781,7 @@ if ($save["mode"] == "add") {
         $debug_html .= "mysqli_query : " . $query . "<br /><br />";
         $save_action = mysqli_query($con, $query);
         if (!$save_action)
-            $debug_html .= "mysqli_query ERROR : " . mysqli_error() . "<br /><br />";
+            $debug_html .= "mysqli_query ERROR : " . mysqli_error($con) . "<br /><br />";
         $nomor     = $_GET["no"];
         $statement = "disapprove";
     }

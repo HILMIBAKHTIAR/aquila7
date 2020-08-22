@@ -36,9 +36,9 @@
 				grid.headers[iCol].newWidth = newWidth;
 				grid.newWidth = p.tblwidth + newWidth - grid.headers[iCol].width;
 				grid.dragEnd();   // adjust column width
-				if (adjustGridWidth !== false) {
-					$self.jqGrid("setGridWidth", grid.newWidth, false); // adjust grid width too
-				}
+				//if (adjustGridWidth !== false) {
+					// $self.jqGrid("setGridWidth", grid.newWidth, false); // adjust grid width too
+				//}
 			});
 		}
 	});

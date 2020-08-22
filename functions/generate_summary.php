@@ -1,5 +1,5 @@
 <?php
-function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", $fields)
+function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", $fields = [])
 {
     $i = count($edit["field"]);
     if (strstr($features, "subtotal")) {

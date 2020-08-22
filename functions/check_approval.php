@@ -1,5 +1,5 @@
 <?php
-function check_approval($data, $type = "periode|edit|approve|delete|disappr|print", $fields ="")
+function check_approval($data, $type = "periode|edit|approve|delete|disappr|print", $fields = [])
 {
     $string = "";
     if (empty($fields["status_aktif"])) {

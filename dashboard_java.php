@@ -27,7 +27,8 @@
 				maxDate: '".$max_date."',
 				// maxDate: '+1M +30D',
 				changeMonth: true,
-				changeYear: true
+				changeYear: true,
+				onClose: function () { this.focus(); }
 			});
 		}
 	},formatoptions:{ newformat: 'Y-m-d' } }";$coltemplate["datetime_1"]="{ ".$temp_width.", ".$temp_sortable.", ".$temp_editable.", editoptions:{
@@ -42,6 +43,7 @@
                         changeMonth: true,
                         changeYear: true,
                         yearRange: '-99:+99',
+                        onClose: function () { this.focus(); }
 
                   });
                   // $(element).datetimepicker(
@@ -64,7 +66,8 @@
                         maxDate: '".$max_date."',
                         // maxDate: '+1M +30D',
                         changeMonth: true,
-                        changeYear: true
+                        changeYear: true,
+                        onClose: function () { this.focus(); }
                   });
             }
       }, formatoptions:{ newformat: 'Y-m-d' } }";$coltemplate["date_1_custom"]="{ ".$temp_width.", ".$temp_sortable.", ".$temp_editable.", editoptions:{
@@ -73,7 +76,8 @@
 				dateFormat: 'yy-mm-dd',
 				changeMonth: true,
 				changeYear: true,
-				yearRange: '-99:+99'
+				yearRange: '-99:+99',
+				onClose: function () { this.focus(); }
 			});
 		}
 	}, formatoptions:{ newformat: 'Y-m-d' }, editrules:{ date:true } }";$coltemplate["period_1_custom"]="{ ".$temp_width.", ".$temp_sortable.", ".$temp_editable.", editoptions:{
@@ -82,7 +86,8 @@
 				dateFormat: 'yy-mm',
 				changeMonth: true,
 				changeYear: true,
-				yearRange: '-99:+99'
+				yearRange: '-99:+99',
+				onClose: function () { this.focus(); }
 			});
 		}
 	}, formatoptions:{ newformat: 'Y-m' } }";$coltemplate["datetime_1_custom"]="{ ".$temp_width.", ".$temp_sortable.", ".$temp_editable.", editoptions:{
@@ -92,7 +97,8 @@
 				timeFormat: 'HH:mm:ss',
 				changeMonth: true,
 				changeYear: true,
-				yearRange: '-99:+99'
+				yearRange: '-99:+99',
+				onClose: function () { this.focus(); }
 			});
 		}
 	}, formatoptions:{ newformat: 'Y-m-d H:i:s' } }";$coltemplate["date_2"]="{ ".$temp_width.", ".$temp_sortable.", ".$temp_editable.", editoptions:{
@@ -100,7 +106,8 @@
 			$(element).datepicker({
 				dateFormat: 'dd-mm-yy',
 				changeMonth: true,
-				changeYear: true
+				changeYear: true,
+				onClose: function () { this.focus(); }
 			});
 		}
 	}, formatoptions:{ newformat: 'Y-m-d' }, editrules:{ date:true } }";$coltemplate["time_1"]="{ ".$temp_width.", ".$temp_sortable.", ".$temp_editable.", editoptions:{
@@ -109,6 +116,7 @@
 				autoclose: true,
 				align: 'left',
 				placement:'top',
+				onClose: function () { this.focus(); }
 			});
 		}
 	}, formatoptions:{ newformat: 'H:i:s' } }";$coltemplate["browsedefault"]="{ searchoptions:{sopt:['eq','bw','bn','cn','nc','ew','en']} }";

@@ -97,12 +97,15 @@ if ($index_override != 1) {
     /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
     // $index_datatable["fixedHeader"]    = "true";
     /*START edited_by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
+    $index_datatable["order"]               = "[]";
     $index_datatable["scrollX"]             = "true";
     $index_datatable["scrollY"]             = "'35vw'";
     $index_datatable["scrollCollapse"]      = "true";
     $index_datatable["stateSave"]           = "true";
     if($index_type == "report"){
-        $index_datatable["dom"]             = "'Blfrtip'";
+        $index_datatable["dom"]             = " \"<'row'<'col-sm-12 col-md-6'lB><'col-sm-12 col-md-6'f>>\" +
+                                                \"<'row'<'col-sm-12'tr>>\" +
+                                                \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
         $index_datatable["buttons"]         = "[
             {         
                 extend: 'copy',
@@ -145,6 +148,8 @@ if ($index_override != 1) {
     }";
     /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
     $index_datatable["paging"]              = "true";
+    $index_datatable["deferRender"]         = "true";
+    $index_datatable["scroller"]            = "true";
     /*START added-by:thomy@inspiraworld.com;last_updated:2020-06-04;*/
     
     /*START added-by:thomy@inspiraworld.com;last_updated:2020-06-04;*/
@@ -292,27 +297,84 @@ if($index["ajax"] == 1) {
         foreach ($table_include as $setting)
             include $setting;
     }
-    echo "\n<table class='table table-bordered table-striped table-hover table-datatable' id='table_" . $table["id"] . "'>\n\t<thead>\n\t\t<tr>";
+    echo "\n<table class='table table-bordered table-striped table-hover table-datatable' id='table_" . $table["id"] . "'>\n\t<thead>\n\t\t";
     $length      = count($table["column"]);
     $column_numb = 0;
+    foreach ($table["column"] as $key => $value) {
+        $table["column"][$key]["draw"]  = 0;
+    }
+    foreach ($table["colHeader"] as $key => $colHeader) {
+        $key % 2 == 1 ? $rowClass = "odd" : $rowClass = "even";
+        echo "<tr class= " . $rowClass . ">";
+        $startSpan = 0;
+        $endSpan = 0; 
+        $isColspan = 0;  
+        for ($i = 0; $i < sizeof($table["column"]); $i++) {
+            foreach ($colHeader as $colGroup) {
+                if($colGroup["name"] == $table["column"][$i]["name"]){   
+                    if (!isset($colGroup["class"]))
+                            $colGroup["class"] = "";
+                    echo "<th class='group " . $colGroup["class"] . "' colspan = ". $colGroup["colspan"] .">" .$colGroup["caption"] . "</th>";
+                    $startSpan = $i;
+                    $endSpan = $i + $colGroup["colspan"] - 1;
+                    $isColspan = 1;
+                }
+            }
+            if($isColspan && ($i < $startSpan || $i > $endSpan))
+                $isColspan = 0; 
+            if(!$isColspan){
+                if(!$table["column"][$i]["draw"]){
+                    $isBelowColspan = 0;
+                    for ($r = $key + 1; $r < sizeof($table["colHeader"] ); $r++) {
+                        for ($k = 0 ; $k < sizeof($table["colHeader"][$r]); $k++){
+                            for ($l = 0; $l < sizeof($table["column"]); $l++) {
+                                if($table["colHeader"][$r][$k]["name"] == $table["column"][$l]["name"]){
+                                    $startSpan = $l;
+                                    $endSpan = $l + $table["colHeader"][$r][$k]["colspan"] - 1;
+                                    if($i >= $startSpan && $i <= $endSpan){
+                                        echo "<th></th>";
+                                        $isBelowColspan = 1;
+                                        break 3;
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                    if(!$isBelowColspan){
+                        $width = "";
+                        if (!empty($column["width"]))
+                            $width = " style='width:" . $table["column"][$i]["width"] . "px;' ";
+                        if (!isset($column["class"]))
+                                $table["column"][$key]["class"] = "";
+                        $rowspan = sizeof($table["colHeader"]) + 1 - $key;
+                        echo "<th rowspan = ".$rowspan . " " . $width . " class='col_header_numb_" . $column_numb . " col_header_name_" . $table["column"][$i]["name"] . " " . $table["column"][$i]["class"] . "'>" . $table["column"][$i]["caption"];
+                        $table["column"][$i]["draw"] = 1;
+                    }
+                }
+            }
+            $column_numb++;
+        }
+        echo "</tr>";
+    }
+    echo "<tr>";
+    $column_numb = 0;
     foreach ($table["column"] as $column) {
-        $width = "";
-        if (!empty($column["width"]))
-            $width = " style='width:" . $column["width"] . "px;' ";
-        if ($table["id"] == "index_report" && $width != "")
-            $width = " style='width:" . $column["width"] . "px!important;min-width:" . $column["width"] . "px!important;' ";
-        echo "<th " . $width . " class='col_header_numb_" . $column_numb . " col_header_name_" . $column["name"] . " " . $column["class"] . "'>" . $column["caption"];
-        if (empty($column["sort"]))
-            $column["sort"] = $column["name"];
-        if ($column["sort"] != "empty")
-            echo "<a href='" . $table["url"] . "&ob=" . $column["sort"] . "&ad=desc'><img src='" . $config["webspira"] . "assets_dashboard/img/sort-desc.png' style='float:right; width:16px;'></a><a href='" . $table["url"] . "&ob=" . $column["sort"] . "&ad=asc'><img src='" . $config["webspira"] . "assets_dashboard/img/sort-asc.png' style='float:right; width:16px;'></a>";
-        echo "</th>";
+        if (!$column["draw"]) {
+            $width = "";
+            if (!empty($column["width"]))
+                $width = " style='width:" . $column["width"] . "px;' ";
+            if ($table["id"] == "index_report" && $width != "")
+                $width = " style='width:" . $column["width"] . "px!important;min-width:" . $column["width"] . "px!important;' ";
+            echo "<th " . $width . " class='col_header_numb_" . $column_numb . " col_header_name_" . $column["name"] . " " . $column["class"] . "'>" . $column["caption"];
+            if (empty($column["sort"]))
+                $column["sort"] = $column["name"];
+            echo "</th>";
+        }
         $column_numb++;
     }
     echo "\n\t\t</tr>\n\t</thead>\n\t<tbody>";
     echo "\n\t</tbody>";
-    if($index["footer"] == 1)
-        echo "\n\t<tfoot></tfoot>";
     echo "\n</table>";
 }
 /*END added-by:thomy@inspiraworld.com;last_updated:2020-06-04;*/
@@ -343,6 +405,7 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                         var server = '".json_encode($mysql)."';
                         var index_table = '".json_encode($index_table)."';
                         var index_data = '../../".$config["project"].$index["data"]."';
+                        var database = '../../".$config["project"]."config/database.php';
                     ";
                 }
             ?>
@@ -381,11 +444,12 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                                         fields:fields,
                                         server:server,
                                         index_table:index_table,
-                                        index_data:index_data
+                                        index_data:index_data,
+                                        database:database
                                     },
-                                error: function(){
+                                error: function(data){
                                     $('.table_index-error').html('');
-                                    $('#table_index tbody').html(\"<tr><td colspan='".(count($fields) + 2)."'>No data available in table</td></tr>\");
+                                    $('#table_index tbody').html(\"<tr><td colspan='".(count($fields) + 2)."'><center>No data available in table</center></td></tr>\");
                                     $('#table_index_processing').css('display','none');
                                 }
                              }";

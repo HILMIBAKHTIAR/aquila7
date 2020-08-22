@@ -408,7 +408,7 @@ a.show-sidebar:hover {
 .sidebar-show #sidebar-left.col-xs-2 {
   opacity: 1;
   width: 16.666666666666664%;
-  padding: 0 15px;
+  padding: 0 10px;
 }
 .sidebar-show #content.col-xs-12 {
   opacity: 1;
@@ -2238,7 +2238,8 @@ input.error {border:1px dotted red;}
 div.error {display:none;}
 .hiding  {display:none;}
 
-@media (min-width: 768px) {
+/*@media (min-width: 768px) {*/
+   @media (min-width: 990px) {
   #sidebar-left.col-sm-2 {
     opacity: 1;
     width: 16.666666666666664%;
@@ -2489,7 +2490,8 @@ div.error {display:none;}
 
 }
 
-@media (max-width: 768px) {
+/*@media (max-width: 768px) {*/
+   @media (max-width: 990px) {
   #top-panel {
     line-height : 0px;
     height: 1px

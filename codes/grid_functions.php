@@ -1,6 +1,6 @@
 <?php ob_start(); ?>
 <script type="text/javascript">
-function auto_resize_<?php echo $grid_id?>(obj)
+function autoResize_<?php echo $grid_id?>(obj)
 {
 	// Resize Jqgrid
 	var $this = $(obj), iCol, iRow, rows, row, cm, colWidth,
@@ -13,29 +13,73 @@ function auto_resize_<?php echo $grid_id?>(obj)
     $cells.wrapInner("<span class='wrapper-width' style='white-space: nowrap'></span>");
     $colHeaders.wrapInner("<span class='wrapper-width'></span>");
 
+    maxColWidth = [];
+    headerWidth = [];
+    sumCellWidth = 0;
+    countColWidth = 0;
+
     for (iCol = 0; iCol < n; iCol++) {
-        cm = colModel[iCol];
-        colWidth = $("#" + idColHeadPrexif + $.jgrid.jqID(cm.name) + ">.wrapper-width").outerWidth() + 10;
-        for (iRow = 0, rows = obj.rows; iRow < rows.length; iRow++) {
-            row = rows[iRow];
-            if ($(row).hasClass("jqgrow")) {
-            	cellWidth = $(row.cells[iCol]).find(".wrapper-width").outerWidth();
-            	if(iCol > 1)
-            		cellWidth += 15;
+    	cm = colModel[iCol];
+        colWidth = parseInt($("#" + idColHeadPrexif + $.jgrid.jqID(cm.name) + ">.wrapper-width").outerWidth()) + 10;
+        headerWidth[iCol] = colWidth;
+        maxColWidth[iCol] = colWidth;
+    	for (iRow = 0, rows = obj.rows; iRow < rows.length; iRow++) {
+    		row = rows[iRow];
+	    	cellWidth = parseInt($(row.cells[iCol]).find(".wrapper-width").outerWidth());
+	    	if ($(row).hasClass("jqgrow") && !cm.hidden) {
+	    		if(cm.name == "cb")
+            		cellWidth = 25;
             	else
-            		cellWidth += 10;
-            	colWidth = Math.max(colWidth, cellWidth); 
-            }
-        }
-        $this.jqGrid("setColWidth", iCol, colWidth);
+            		cellWidth += 15;
+	    		maxColWidth[iCol] = Math.max(maxColWidth[iCol], cellWidth);
+	    	}
+    	}
+    	if(!cm.hidden && cm.name != "cb" && cm.name != "rn"){
+    		// if(colWidth >= maxColWidth[iCol]){
+	    		countColWidth += 1;
+	    		sumCellWidth += maxColWidth[iCol];
+    		// }
+		    // else
+		    // 	sumCellWidth += maxColWidth[iCol];
+    	}
     }
+    
+    tableWidth = 1050;
+    addWidth = 0;
+    <?php if(isset($_SESSION["setting"]["grid_width"]) && !empty($_SESSION["setting"]["grid_width"])) {?>
+    	tableWidth = <?php echo $_SESSION["setting"]["grid_width"] ?>;
+    <?php }?>
+	addWidth = (tableWidth - sumCellWidth );
+   	if(addWidth > 0)
+   		addWidth /= countColWidth;
+   	else
+   		addWidth = 0;
+    
+    for (iCol = 0; iCol < n; iCol++) {
+    	cm = colModel[iCol];
+        if(!cm.hidden && cm.name != "rn" && cm.name != "cb")
+        	maxColWidth[iCol] = maxColWidth[iCol] + addWidth; 
+        else if(cm.name == "cb" || cm.name == "rn")
+        	maxColWidth[iCol] = 25;
+        $this.jqGrid("setColWidth", iCol, maxColWidth[iCol]);
+    }
+   	
+	<?php if (array_key_exists('colHeader', $grid)) { ?>
+		$this.jqGrid("destroyGroupHeader");
+		var groupHeaders = <?php echo $group_header_var ?>;
+		for (var iRow = 0; iRow < groupHeaders.length; iRow++) {
+			$this.jqGrid("setGroupHeaders", groupHeaders[iRow]);
+		}
+	<?php } ?>
     $('.wrapper-width').contents().unwrap();
 }
 
 function actGridComplete_<?php echo $grid_id?>()
 {
+	<?php echo $grid_id?>_is_load = 0;
 	if(<?php echo $grid_id?>_load == 0)
 	{
+		<?php echo $grid_id?>_is_load = 1;
 		var records = jQuery(<?php echo $grid_id?>_element).jqGrid('getGridParam','records');
 		/*
 		for(var i = 1; i <= records; i++)
@@ -46,13 +90,14 @@ function actGridComplete_<?php echo $grid_id?>()
 		*/<?php echo $grid_id?>_new_record = (records*1) + 1;<?php echo $grid_id?>_load++;
 	}
 	grid_complete_<?php echo $grid_id?>();
-	auto_resize_<?php echo $grid_id?>(this);
+	if(!<?php echo $grid_id?>_is_load)
+		autoResize_<?php echo $grid_id?>(this);
 	vgrid_comp['<?php echo $grid_id?>'] = 'completed'; // new sync
 }
 
 function actLoadComplete_<?php echo $grid_id?>() // new sync
 {
-	auto_resize_<?php echo $grid_id?>(this);
+	autoResize_<?php echo $grid_id?>(this);
 	vgrid_load['<?php echo $grid_id?>'] = 'done';
 }
 function actFormatCell_<?php echo $grid_id?>(rowid,cellname,value,iRow,iCol)
@@ -106,11 +151,11 @@ function actAfterSaveCell_<?php echo $grid_id?>(rowid,cellname,value,iRow,iCol)
 			alert('<?php echo get_message(105)?>');
 		*/
 	}
-	auto_resize_<?php echo $grid_id?>(this);
+	autoResize_<?php echo $grid_id?>(this);
 }
 function actAfterRestoreCell_<?php echo $grid_id?>(rowid,cellname,value,iRow,iCol)
 {<?php echo $grid_id?>_allow_delete = 1;<?php echo $grid_id?>_editing_rowid = 0;<?php echo $grid_id?>_editing_cellname = '';<?php echo $grid_id?>_editing_value = 0;<?php echo $grid_id?>_editing_iRow = 0;<?php echo $grid_id?>_editing_iCol = 0;
-	auto_resize_<?php echo $grid_id?>(this);
+	autoResize_<?php echo $grid_id?>(this);
 }
 function actAddFunc_<?php echo $grid_id?>()
 {
@@ -205,7 +250,7 @@ function actDelFunc_<?php echo $grid_id?>()
 			afterComplete:function()
 			{
 				after_delete_<?php echo $grid_id?>();
-				auto_resize_<?php echo $grid_id?>(this);
+				autoResize_<?php echo $grid_id?>(this);
 			},
 			reloadAfterSubmit:false
 		});
