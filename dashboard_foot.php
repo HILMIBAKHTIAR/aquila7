@@ -174,17 +174,17 @@
 	function defaultPrint(){
 		Print();
 		/* DOCUMENTATION PARAM 
-		1: title -> Custom Title
-		2: header / HTML Yang Akan Ditampilkan Pada Bagian Caption/ Header dari Print
-		3: periode -> Custom Periode
-		4: company_mode -> 1 Utk Tampil Data Company, 0 Utk Tidak Tampil
+		0: title -> Custom Title
+		1: header / HTML Yang Akan Ditampilkan Pada Bagian Caption/ Header dari Print
+		2: periode -> Custom Periode
+		3: company_mode -> 1 Utk Tampil Data Company, 0 Utk Tidak Tampil
 		4: company_logo
 		5: company_name
 		6: company_address
 		7: company_contact
 		*/
 	}
- 	function Print(title='',  header='', periode='', company_mode='', company_logo='', company_name='', company_address='', company_contact=''){
+ 	function Print(title='',  header='', periode='',  groupReportPrint='', company_mode='', company_logo='', company_name='', company_address='', company_contact=''){
  		var company_mode = company_mode;
  		var company_logo = company_logo;
  		var company_name = company_name;
@@ -194,6 +194,7 @@
 	    var periode = periode;
 	    var header= header;
 	    var table_header = "", table_body = "", table_footer ="";
+	   
 	    if($('.dataTables_scrollHead .table-datatable').children("thead").length > 0){
 	    	table_header = $('.dataTables_scrollHead .table-datatable').children("thead").html().toString();
 	    }
@@ -358,6 +359,7 @@
 	// FILTER WITH AJAX
 	$(document).on('click', '#search', function(event) {
 		event.preventDefault();
+		$(".table-datatable").DataTable().state.clear();
 		var filter_link = $("#form_filter").attr("action");
 		var obj=$.dialog({
 	      icon: 'fa fa-spinner fa-spin',
@@ -391,6 +393,7 @@
 	// RELOAD WITH AJAX
 	$(document).on('click', '.reload', function(event) {
 		event.preventDefault();
+		$(".table-datatable").DataTable().state.clear();
 		var reload_link = $(this).attr("link");
 		var obj=$.dialog({
 	      icon: 'fa fa-spinner fa-spin',

@@ -91,6 +91,7 @@
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/dataTables.fixedHeader.js" type="text/javascript"></script>
 		<!-- DATATABLE EXPORT BUTTONS -->
 		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/dataTables.buttons.min.js"></script> 
+		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/buttons.colVis.min.js"></script> 
 		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/jszip.min.js"></script>
 		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/buttons.html5.min.js"></script>
 		<!-- DATATABLE EXPORT BUTTONS -->

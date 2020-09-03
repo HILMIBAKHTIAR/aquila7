@@ -63,10 +63,8 @@ if ($index_override != 1) {
     $index_filter["custom_rules"]    = "";
     $index_filter["submit_function"] = "";
     $index_filter["post_dom"]        = "";
-    /*START edded_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
     $index_filter["btn_title"]       = "FILTER";
     $index_filter["btn_icon"]        = "fa fa-filter";
-    /*START edded_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
     if ($index_type == "index") {
         $index_navbutton["generate"] = "reload|add";
         if (!empty($_SESSION["setting"]["navbutton_index"]))
@@ -93,17 +91,45 @@ if ($index_override != 1) {
     $index_page["now"]            = 0;
     if (!empty($_GET["p"]))
         $index_page["now"] = $_GET["p"];
-    $index_page["position"]            = 0;
-    /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
-    // $index_datatable["fixedHeader"]    = "true";
-    /*START edited_by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
+    $index_page["position"]                 = 0;
     $index_datatable["order"]               = "[]";
     $index_datatable["scrollX"]             = "true";
     $index_datatable["scrollY"]             = "'35vw'";
     $index_datatable["scrollCollapse"]      = "true";
     $index_datatable["stateSave"]           = "true";
+    $index_datatable["dom"]                 = " \"<'row'<'col-sm-12 col-md-6'lB><'col-sm-12 col-md-6'f>>\" +
+                                                \"<'row'<'col-sm-12'tr>>\" +
+                                                \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
+    $index_datatable["buttons"]             = "[
+        {         
+            extend: 'copy',
+            attr:  {
+                title: 'Copy'
+            },
+            title:'" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
+            text: '<i class=\"fa fa-copy\"></i>',
+            filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
+            className: 'btn btn-export btn-copy',
+        }, 
+        {         
+            extend: 'colvis',
+            attr:  {
+                title: 'Visibility'
+            },
+            title:'" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
+            text: '<i class=\"fa fa-eye\"></i>',
+            filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
+            className: 'btn btn-export btn-colvis',
+        }
+    ]";
     if($index_type == "report"){
+        $index_datatable["paging"]          = "false";
+        $index_datatable["lengthMenu"]      = "[ 1000, 2000, 3000, 4000, 5000 ]";
         $index_datatable["dom"]             = " \"<'row'<'col-sm-12 col-md-6'lB><'col-sm-12 col-md-6'f>>\" +
+                                                \"<'row'<'col-sm-12'tr>>\" +
+                                                \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
+        if($index["ajax"])
+            $index_datatable["dom"]         = " \"<'row'<'col-sm-12 col-md-6'lB><'col-sm-12 col-md-6'>>\" +
                                                 \"<'row'<'col-sm-12'tr>>\" +
                                                 \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
         $index_datatable["buttons"]         = "[
@@ -112,9 +138,9 @@ if ($index_override != 1) {
                 attr:  {
                     title: 'Copy'
                 },
-                title:'".strtoupper($_SESSION["menu_".$_GET["m"]]["title"])."',
+                title:'" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
                 text: '<i class=\"fa fa-copy\"></i>',
-                filename: '".strtoupper($_SESSION["menu_".$_GET["m"]]["title"])."',
+                filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
                 className: 'btn btn-export btn-copy',
             }, 
             {         
@@ -122,9 +148,9 @@ if ($index_override != 1) {
                 attr:  {
                     title: 'Excel'
                 },
-                title: '".strtoupper($_SESSION["menu_".$_GET["m"]]["title"])."',
+                title: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
                 text: '<i class=\"fa fa-file-excel-o\"></i>',
-                filename: '".strtoupper($_SESSION["menu_".$_GET["m"]]["title"])."',
+                filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
                 className: 'btn btn-export btn-excel',
             }
         ]";
@@ -134,27 +160,17 @@ if ($index_override != 1) {
         delete data.columns[i].visible;
       }
     }";
-    /*END edited_by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
     $index_datatable["initComplete"]        = "function( settings ) {
         hideLoader();
         $( '.table-datatable' ).removeClass( 'hide' );
         // $( '.index_box_content' ).removeClass( 'hide' );
         $( $.fn.dataTable.tables(true) ).DataTable().columns.adjust();
-        $('.dataTables_filter').append('<span class=\"bt-search\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></span>');
+        $( '.dataTables_filter' ).append('<span class=\"bt-search\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></span>');
         var search = $(\".dataTables_filter input[type=search]\").val();
         if(search != ''){
              $(\".dataTables_filter input[type=search]\").css(\"width\", \"300px\");
         }
     }";
-    /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
-    $index_datatable["paging"]              = "true";
-    $index_datatable["deferRender"]         = "true";
-    $index_datatable["scroller"]            = "true";
-    /*START added-by:thomy@inspiraworld.com;last_updated:2020-06-04;*/
-    
-    /*START added-by:thomy@inspiraworld.com;last_updated:2020-06-04;*/
-    if ($index_type == "report")
-        $index_datatable["paging"] = "false";
     $index_print["function"] = "defaultPrint()";
     $index_html = "";
     if (!empty($index_include))
@@ -163,6 +179,7 @@ if ($index_override != 1) {
     if($index["ajax"] == 1){
         $index_datatable["processing"] = "true";
         $index_datatable["serverSide"] = "true";
+        $index_datatable["paging"]     = "true";
     }
 }
 /*START added-by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
@@ -375,6 +392,30 @@ if($index["ajax"] == 1) {
     }
     echo "\n\t\t</tr>\n\t</thead>\n\t<tbody>";
     echo "\n\t</tbody>";
+    if(isset($index["query_from"]) AND !empty($index["query_from"])){
+        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $sqlfooter    = $query;
+        if ($index_type == "report"){
+            $sqlfooter  = str_replace('footer','1', $sqlfooter);
+            $sqlfooter  = str_replace('start','0', $sqlfooter);
+            $sqlfooter  = str_replace('limit','18446744073709551615', $sqlfooter);
+
+        }
+        $result = $mysqli->query($sqlfooter);
+        if (!$result) {
+            if ($_SESSION["setting"]["environment"] != "live")
+                echo "<br />Error MySQLi Query: " . $mysqli->error;
+        } else {
+            $i  = 0;
+            $no = 0;
+            $data = $result->fetch_assoc();
+            include $index["data"];
+            $_SESSION["menu_".$_SESSION["g.menu"]]["filter_total"] = $data["footer_total_data"];
+            unset($index_table['data']);
+        }
+    }
+    if($index["footer"] == 1)
+        echo "\n\t<tfoot>". $footer ."</tfoot>";
     echo "\n</table>";
 }
 /*END added-by:thomy@inspiraworld.com;last_updated:2020-06-04;*/
@@ -390,22 +431,28 @@ if ($_SESSION["login"]["framework"] == "webspira")
     $br_br_br = "<br /><br /><br />";
 echo "<div class=\"box-content no-padding\" id=\"index_after_table\">\n\t\t\t\t\t" . $index["after_table"] . "\n\t\t\t\t</div>\n\t\t\t\t" . $br3 . "\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>";
 
+// Print 
+$_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["config"]       = $config;
+$_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["ajax"]         = $index["ajax"];   
+$_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["index_type"]   = $index_type;
+$_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["index_data"]   = '../../'.$config["project"].$index["data"];
+$_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["index_table"]  = $table;
+$_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["query_select"] = $query_select;
 /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
 if ($_SESSION["login"]["framework"] == "pelangi") { ?>
     <script type="text/javascript">
-        // console.log(JSON.parse('<?php echo json_encode($index_include)?>'));
         function setDataTable(){
             <?php 
                 if($index["ajax"] == 1){
                     echo " 
                         var query_select = \"".$query_select."\";
-                        var query_where = \"".$query_where."\";
-                        var query_order = \"".$query_order."\";
-                        var fields = '".json_encode($fields)."';
-                        var server = '".json_encode($mysql)."';
-                        var index_table = '".json_encode($index_table)."';
-                        var index_data = '../../".$config["project"].$index["data"]."';
-                        var database = '../../".$config["project"]."config/database.php';
+                        var query_where  = \"".$query_where."\";
+                        var query_order  = \"".$query_order."\";
+                        var fields       = '".json_encode($fields)."';
+                        var server       = '".json_encode($mysql)."';
+                        var index_type   = \"".$index_type."\";
+                        var index_table  = '".json_encode($index_table)."';
+                        var index_data   = '../../".$config["project"].$index["data"]."';
                     ";
                 }
             ?>
@@ -427,8 +474,9 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                             }
                         }
                         $alignClass = $index_table["column"][$key]["align"];
+                        empty($index_table["column"][$key]["width"]) ? $width = 0 : $width = $index_table["column"][$key]["width"];
                         isset($index_table["column"][$key]["visible"]) ? $visible = $index_table["column"][$key]["visible"] : $visible = 'true';
-                        echo "{ \"targets\": " . $key . ", \"className\": '" . $alignClass . "', \"visible\": " . $visible . ", \"orderable\":" . $orderable . "},";
+                        echo "{ \"targets\": " . $key . ", \"className\": '" . $alignClass . "', \"visible\": " . $visible . ", \"orderable\":" . $orderable . ", \"width\": " . $width . "},";
                     }
                     echo "],";
 
@@ -443,16 +491,37 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                                         query_order:query_order,
                                         fields:fields,
                                         server:server,
+                                        index_type:index_type,
                                         index_table:index_table,
-                                        index_data:index_data,
-                                        database:database
+                                        index_data:index_data
                                     },
-                                error: function(data){
+                                error: function(){
                                     $('.table_index-error').html('');
                                     $('#table_index tbody').html(\"<tr><td colspan='".(count($fields) + 2)."'><center>No data available in table</center></td></tr>\");
                                     $('#table_index_processing').css('display','none');
                                 }
-                             }";
+                             },
+                             createdRow: function(row, data, dataIndex){
+                                var obj = this;
+                                $.each( data, function( key, value ) {
+                                  var td        = value;
+
+                                  var colspan   = $(td).attr('colspan');
+                                  if(colspan)
+                                    $('td:eq('+ key +')', row).attr('colspan', colspan);
+
+                                  var align     = $(td).attr('align');
+                                  if(align)
+                                    $('td:eq('+ key +')', row).css('text-align', align);
+
+                                  var hide      = $(td).hasClass('hide');
+                                  if(hide)
+                                    $('td:eq('+ key +')', row).css('display', 'none');
+
+                                  var celldata  = $(td).html();
+                                  obj.api().cell($('td:eq('+ key +')', row)).data(celldata);
+                                });
+                            }";
                     }
                     /*END added-by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
                 ?>

@@ -93,6 +93,11 @@ foreach ($table["column"] as $column) {
 }
 echo "\n\n\t</tr>\n\t</thead>\n\t<tbody>";
 
+if ($index_type == "report"){
+    $query  = str_replace('footer','0', $query);
+    $query  = str_replace('start','0', $query);
+    $query  = str_replace('limit','18446744073709551615', $query);
+}
 if(isset($index["query_from"]) AND !empty($index["query_from"])){
     $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
     $result = $mysqli->query($query);
@@ -100,30 +105,41 @@ if(isset($index["query_from"]) AND !empty($index["query_from"])){
         if ($_SESSION["setting"]["environment"] != "live")
             echo "<br />Error MySQLi Query: " . $mysqli->error;
     } else {
-        $i  = 0;
-        $no = 0;
+        $i   = 0;
+        $no  = 0;
+        $row = $result->num_rows;
         while ($data = $result->fetch_assoc()) {
+            $index_table["data"][$i]["class"] = "";
             $index_table["data"][$i]["action"] = "";
             $index_table["data"][$i]["break"] = "";
+            $index_table["data"][$i]["after"] = "";
+            $index_table["data"][$i]["element"] = "";
             include $index["data"];
-            if (!empty($index_table["data"][$i]["break"]))
-                echo $index_table["data"][$i]["break"];
             echo "<tr>";
-            $column_numb = 0;
-            foreach ($table["column"] as $column) {
-                $align = "";
-                if (!empty($column["align"]))
-                    $align = "align=\"" . $column["align"] . "\"";
-                $width = "";
-                if (!empty($column["width"]))
-                    $width = " style='width:" . $column["width"] . "px;' ";
-                if ($table["id"] == "index_report" && $width != "")
-                    $width = " style='width:" . $column["width"] . "px!important;min-width:" . $column["width"] . "px!important;' ";
-                echo "<td " . $align . " " . $width . " class='col_detail_numb_" . $column_numb . " col_detail_name_" . $column["name"] . " " . $column["class"] . "'>" . $index_table["data"][$i][$column["name"]] . "</td>";
-                $column_numb++;
+            if (!empty($index_table["data"][$i]["element"])){
+                echo $index_table["data"][$i]["element"];
+            }
+            else{
+                if (!empty($index_table["data"][$i]["break"]))
+                    echo $index_table["data"][$i]["break"];
+                $column_numb = 0;
+                foreach ($table["column"] as $column) {
+                    $align = "";
+                    if (!empty($column["align"]))
+                        $align = "align=\"" . $column["align"] . "\"";
+                    $width = "";
+                    if (!empty($column["width"]))
+                        $width = " style='width:" . $column["width"] . "px;' ";
+                    if ($table["id"] == "index_report" && $width != "")
+                        $width = " style='width:" . $column["width"] . "px!important;min-width:" . $column["width"] . "px!important;' ";
+                    echo "<td " . $align . " " . $width . " class='col_detail_numb_" . $column_numb . " col_detail_name_" . $column["name"] . " " . $column["class"] . "'>" . $index_table["data"][$i][$column["name"]] . "</td>";
+                    $column_numb++;
+                }
+                if (!empty($index_table["data"][$i]["after"]))
+                    echo $index_table["data"][$i]["after"];
+                $no++;
             }
             echo "</tr>";
-            $no++;
         }
     }
 }
