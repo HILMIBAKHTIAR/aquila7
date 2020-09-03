@@ -152,6 +152,16 @@ if ($index_override != 1) {
                 text: '<i class=\"fa fa-file-excel-o\"></i>',
                 filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
                 className: 'btn btn-export btn-excel',
+            }, 
+            {         
+                extend: 'colvis',
+                attr:  {
+                    title: 'Visibility'
+                },
+                title:'" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
+                text: '<i class=\"fa fa-eye\"></i>',
+                filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
+                className: 'btn btn-export btn-colvis',
             }
         ]";
     }
@@ -503,23 +513,20 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                              },
                              createdRow: function(row, data, dataIndex){
                                 var obj = this;
-                                $.each( data, function( key, value ) {
-                                  var td        = value;
-
+                                this.api().cells().every( function () {
+                                  var td        = data[this.index().column];
                                   var colspan   = $(td).attr('colspan');
                                   if(colspan)
-                                    $('td:eq('+ key +')', row).attr('colspan', colspan);
+                                    $('td:eq('+ this.index().column +')', row).attr('colspan', colspan);
 
                                   var align     = $(td).attr('align');
                                   if(align)
-                                    $('td:eq('+ key +')', row).css('text-align', align);
+                                    $('td:eq('+ this.index().column +')', row).css('text-align', align);
 
                                   var hide      = $(td).hasClass('hide');
                                   if(hide)
-                                    $('td:eq('+ key +')', row).css('display', 'none');
+                                    $('td:eq('+ this.index().column +')', row).css('display', 'none');
 
-                                  var celldata  = $(td).html();
-                                  obj.api().cell($('td:eq('+ key +')', row)).data(celldata);
                                 });
                             }";
                     }
