@@ -350,6 +350,7 @@ if ($browse["multiselect"] == 1){
     // $browse_grid["option"]["onPaging"] = "function(id){  
     // }";
     $browse_grid["option"]["onSelectAll"] = "function(id){
+        
         var currentPage = $(this).getGridParam('page').toString();
 
         //retrieve any previously stored rows for this page and re-select them
@@ -364,9 +365,9 @@ if ($browse["multiselect"] == 1){
             {
                 var rowId = ids[j];
                 var rowData = $(this).jqGrid ('getRowData', rowId);
-                if(retrieveSelectedRows.includes(rowData.nomor)){
-                    $(this).jqGrid('setSelection', rowId, true);
-                }
+                // if(retrieveSelectedRows.includes(rowData.nomor)){
+                //     $(this).jqGrid('setSelection', rowId, true);
+                // }
                 allRowNomor[j] = rowData.nomor;
             }
 

@@ -97,44 +97,35 @@ if ($index_override != 1) {
     $index_datatable["scrollY"]             = "'35vw'";
     $index_datatable["scrollCollapse"]      = "true";
     $index_datatable["stateSave"]           = "true";
-    $index_datatable["dom"]                 = " \"<'row'<'col-sm-12 col-md-6'lB><'col-sm-12 col-md-6'f>>\" +
+    $index_datatable["dom"]                 = " \"<'row'<'col-sm-12 col-md-6 dt-left-button'lB><'col-sm-12 col-md-6'f>>\" +
                                                 \"<'row'<'col-sm-12'tr>>\" +
                                                 \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
     $index_datatable["buttons"]             = "[
         {         
-            extend: 'copy',
-            attr:  {
-                title: 'Copy'
-            },
-            title:'" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
-            text: '<i class=\"fa fa-copy\"></i>',
-            filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
-            className: 'btn btn-export btn-copy',
-        }, 
-        {         
-            extend: 'colvis',
+            extend  : 'colvis',
+            name    : 'colvis',
             attr:  {
                 title: 'Visibility'
             },
             title:'" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
             text: '<i class=\"fa fa-eye\"></i>',
             filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
-            className: 'btn btn-export btn-colvis',
+            className: 'btn btn-export btn-colvis'
         }
     ]";
     if($index_type == "report"){
         $index_datatable["paging"]          = "false";
-        $index_datatable["lengthMenu"]      = "[ 1000, 2000, 3000, 4000, 5000 ]";
-        $index_datatable["dom"]             = " \"<'row'<'col-sm-12 col-md-6'lB><'col-sm-12 col-md-6'f>>\" +
+        $index_datatable["dom"]             = " \"<'row'<'col-sm-12 col-md-6 dt-left-button'lB><'col-sm-12 col-md-6'f>>\" +
                                                 \"<'row'<'col-sm-12'tr>>\" +
                                                 \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
         if($index["ajax"])
-            $index_datatable["dom"]         = " \"<'row'<'col-sm-12 col-md-6'lB><'col-sm-12 col-md-6'>>\" +
+            $index_datatable["dom"]         = " \"<'row'<'col-sm-12 col-md-6 dt-left-button'lB><'col-sm-12 col-md-6'>>\" +
                                                 \"<'row'<'col-sm-12'tr>>\" +
                                                 \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
         $index_datatable["buttons"]         = "[
             {         
-                extend: 'copy',
+                extend  : 'copy',
+                name    : 'copy',
                 attr:  {
                     title: 'Copy'
                 },
@@ -144,7 +135,8 @@ if ($index_override != 1) {
                 className: 'btn btn-export btn-copy',
             }, 
             {         
-                extend: 'excel',
+                extend  : 'excel',
+                name    : 'excel',
                 attr:  {
                     title: 'Excel'
                 },
@@ -154,7 +146,8 @@ if ($index_override != 1) {
                 className: 'btn btn-export btn-excel',
             }, 
             {         
-                extend: 'colvis',
+                extend  : 'colvis',
+                name    : 'colvis',
                 attr:  {
                     title: 'Visibility'
                 },
@@ -166,14 +159,13 @@ if ($index_override != 1) {
         ]";
     }
     $index_datatable["stateSaveParams"]     = "function ( settings, data ) {
-      for ( var i=0, ien=data.columns.length ; i<ien ; i++ ) {
+      for ( var i = 0, ien = data.columns.length ; i < ien ; i++ ) {
         delete data.columns[i].visible;
       }
     }";
     $index_datatable["initComplete"]        = "function( settings ) {
         hideLoader();
         $( '.table-datatable' ).removeClass( 'hide' );
-        // $( '.index_box_content' ).removeClass( 'hide' );
         $( $.fn.dataTable.tables(true) ).DataTable().columns.adjust();
         $( '.dataTables_filter' ).append('<span class=\"bt-search\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></span>');
         var search = $(\".dataTables_filter input[type=search]\").val();
@@ -192,7 +184,6 @@ if ($index_override != 1) {
         $index_datatable["paging"]     = "true";
     }
 }
-/*START added-by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
 $query = $index["query_select"];
 $query_select = $index["query_select"];
 $query_where = "";
@@ -228,7 +219,6 @@ if ($index_type == "index") {
         $query_order = $index["query_order"];
     }
 }
-/*END added-by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
 if ($index["debug"] == 1)
     echo "<br />Debugging Query Index #1 :<br />" . $query . "<br /><br />";
 elseif ($_SESSION["setting"]["environment"] != "live")
@@ -283,9 +273,7 @@ if ($index_type == "index") {
 $hide_class ="";
 if($index["ajax"] == 1) 
     $hide_class = "hide";
-/*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-19;*/
 echo "\n<div class='row animated fadeInDown index_box_content " . $index_type . "'>\n\t<div class='col-xs-12'>\n\t\t<div class='box'>\n\t\t\t<div class='box-header'>\n\t\t\t\t<div class='box-name'>\n\t\t\t\t\t<i class='fa fa-files-o'></i>\n\t\t\t\t\t<span>" . $index["title"] . "</span>\n\t\t\t\t</div>\n\t\t\t<!--<div class='box-icons'>\n\t\t\t\t\t<a class='collapse-link'>\n\t\t\t\t\t\t<i class='fa fa-chevron-up'></i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a class='expand-link'>\n\t\t\t\t\t\t<i class='fa fa-expand'></i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a class='close-link'>\n\t\t\t\t\t\t<i class='fa fa-times'></i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>-->\n\t\t\t\t<div class='no-move'></div>\n\t\t\t</div>\n\t\t\t<div class='box-content no-padding' id='index_content'><div class=\"lds-ellipsis " . $hide_class . "\"><div></div><div></div><div></div><div></div></div>";
-/*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-19;*/
 if ($_SESSION["login"]["framework"] == "webspira") {
     if ($index_type == "index") {
         echo "\n\t\t\t\t<div class='box-content'>";
@@ -302,9 +290,7 @@ if ($_SESSION["login"]["framework"] == "webspira") {
 // PASSING AND GENERATE TABLE
 $table_override = 1;
 $table          = $index_table;
-/*START added-by:thomy@inspiraworld.com;last_updated:2020-06-04;*/
 if($index["ajax"] == 1) {
-   // ADD THOMY LOAD AJAX 
     $fields = array();
     for ($i = 1; $i < (count($index_table["column"]) - 1); $i++) { 
        array_push($fields,$index_table["column"][$i]["name"]);
@@ -424,11 +410,10 @@ if($index["ajax"] == 1) {
             unset($index_table['data']);
         }
     }
-    if($index["footer"] == 1)
+    if($index["footer"] == 1 && !empty($footer))
         echo "\n\t<tfoot>". $footer ."</tfoot>";
     echo "\n</table>";
 }
-/*END added-by:thomy@inspiraworld.com;last_updated:2020-06-04;*/
 else {
     include $config["webspira"] . "codes/table.php";
 }
@@ -448,7 +433,6 @@ $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["index_type"]   = $index_type;
 $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["index_data"]   = '../../'.$config["project"].$index["data"];
 $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["index_table"]  = $table;
 $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["query_select"] = $query_select;
-/*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
 if ($_SESSION["login"]["framework"] == "pelangi") { ?>
     <script type="text/javascript">
         function setDataTable(){
@@ -463,16 +447,16 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                         var index_type   = \"".$index_type."\";
                         var index_table  = '".json_encode($index_table)."';
                         var index_data   = '../../".$config["project"].$index["data"]."';
+                        var database     = '../../".$config["project"]."config/database.php';
                     ";
                 }
             ?>
-            $(".table-datatable").DataTable({ 
+            var table = $(".table-datatable").DataTable({ 
                 <?php 
                     foreach($index_datatable as $key => $val)
                         echo " " . $key . ":" . $val . ", ";
 
                     echo "\"columnDefs\": [" ;
-                    
                     foreach($index_table["column"] as $key => $val){
                         $orderable = 'true';
                         if($index["ajax"] == 1){
@@ -490,7 +474,6 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                     }
                     echo "],";
 
-                    /*START added-by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
                     if($index["ajax"] == 1){
                         echo "ajax:{
                                 url :'".$config["webspira"]."codes/ajax-grid-data.php',
@@ -503,7 +486,8 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                                         server:server,
                                         index_type:index_type,
                                         index_table:index_table,
-                                        index_data:index_data
+                                        index_data:index_data,
+                                        database:database
                                     },
                                 error: function(){
                                     $('.table_index-error').html('');
@@ -513,30 +497,37 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                              },
                              createdRow: function(row, data, dataIndex){
                                 var obj = this;
-                                this.api().cells().every( function () {
-                                  var td        = data[this.index().column];
-                                  var colspan   = $(td).attr('colspan');
-                                  if(colspan)
-                                    $('td:eq('+ this.index().column +')', row).attr('colspan', colspan);
+                                if(typeof data.find(cell => cell.includes('colspan')) !== 'undefined'){
+                                    this.api().cells().every( function () {
+                                      var td        = data[this.index().column];
+                                      var colspan   = $(td).attr('colspan');
+                                      if(colspan)
+                                        $('td:eq('+ this.index().column +')', row).attr('colspan', colspan);
 
-                                  var align     = $(td).attr('align');
-                                  if(align)
-                                    $('td:eq('+ this.index().column +')', row).css('text-align', align);
+                                      var align     = $(td).attr('align');
+                                      if(align)
+                                        $('td:eq('+ this.index().column +')', row).css('text-align', align);
 
-                                  var hide      = $(td).hasClass('hide');
-                                  if(hide)
-                                    $('td:eq('+ this.index().column +')', row).css('display', 'none');
+                                      var hide      = $(td).hasClass('hide');
+                                      if(hide)
+                                        $('td:eq('+ this.index().column +')', row).css('display', 'none');
 
-                                });
+                                    });
+                                }
                             }";
                     }
-                    /*END added-by:thomy@inspiraworld.com;last_updated:2020-06-08;*/
                 ?>
+            });
+            table.on( 'buttons-action', function ( e, buttonApi, dataTable, node, config ) {
+                if(config.name == 'colvis'){
+                    $( '.dt-button-collection:empty').remove();
+                    $( node ).unwrap( '<div class="dt-colvis"></div' );
+                    $( node ).add( $( node ).nextAll( '.dt-button-background, .dt-button-collection' ) ).wrapAll( '<div class="dt-colvis"></div' );
+                    $( '.buttons-columnVisibility:has(span:empty)' ).css('display', 'none');
+                }
             });
     };
     function reDrawDataTable(){
-        $(".table-datatable").DataTable().destroy();
-        setDataTable();
         $(".table-datatable").DataTable().columns.adjust().draw(false);
     }
     function setPrint(){
@@ -548,7 +539,6 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
     </script>
 <?php } ?>
 <?php 
-/*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
 ?>
 <?php
 /*created_by:patricklipesik@gmail.com,release_date:2019-12-16*/

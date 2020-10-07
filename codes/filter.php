@@ -3,6 +3,7 @@ if ($filter_override != 1) {
     $protocol          = $_SERVER["HTTPS"] == "on" ? "https" : "http";
     $filter["urlback"] = $protocol . "://" . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"];
     $filter["hide"]    = 0;
+    $filter["btn-hide"]= 0;
     $filter["url"]     = $_SESSION["g.url"];
     $filter["mode"]    = "filter";
     $filter["class"]   = "";
@@ -42,13 +43,15 @@ $filter["field"][$i]["input"]            = "urlback";
 $filter["field"][$i]["input_value"]      = $filter["urlback"];
 $i++;
 /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-19;*/
-$filter["field"][$i]["input_col"]           = "col-sm-12";
-$filter["field"][$i]["input_element"]       = "button";
-$filter["field"][$i]["input_attr"]["id"]    = "search";
-$filter["field"][$i]["input_attr"]["class"] = "btn-filter";
-$filter["field"][$i]["input_attr"]["type"]  = "submit";
-$filter["field"][$i]["input_attr"]["value"] = "<i class='".$filter["btn_icon"]."'></i>&nbsp;".$filter["btn_title"];
-$i++;
+if ($filter["btn-hide"] != 1) {
+    $filter["field"][$i]["input_col"]           = "col-sm-12";
+    $filter["field"][$i]["input_element"]       = "button";
+    $filter["field"][$i]["input_attr"]["id"]    = "search";
+    $filter["field"][$i]["input_attr"]["class"] = "btn-filter";
+    $filter["field"][$i]["input_attr"]["type"]  = "submit";
+    $filter["field"][$i]["input_attr"]["value"] = "<i class='".$filter["btn_icon"]."'></i>&nbsp;".$filter["btn_title"];
+    $i++;
+}
 /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-19;*/
 $filter_html .= "\n<script language='javascript' type='text/javascript'>\n$(document).ready(function(){ ";
 if ($filter["hide"] == 1)

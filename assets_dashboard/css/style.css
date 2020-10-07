@@ -470,7 +470,7 @@ table.no-border-bottom tr:last-child td {
   border-bottom: 2px solid #bbb;
 }
 .dataTables_wrapper {
-  overflow: hidden;
+  overflow: auto;
 }
 .dataTables_wrapper table.table {
   clear: both;
@@ -2698,4 +2698,26 @@ div.error {display:none;}
 
 .blockMsg .ui-jqgrid > .ui-jqgrid-pager{
   width: 100%!important;
+}
+
+/*Scrollbar*/
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #bbb; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa; 
 }

@@ -3,20 +3,20 @@
 function autoResize_<?php echo $grid_id?>(obj)
 {
 	// Resize Jqgrid
-	var $this = $(obj), iCol, iRow, rows, row, cm, colWidth,
-        $cells = $this.find(">tbody>tr>td"),
+	var $this 		= $(obj), iCol, iRow, rows, row, cm, colWidth,
+        $cells 		= $this.find(">tbody>tr>td"),
         $colHeaders = $(obj.grid.hDiv).find(">.ui-jqgrid-hbox>.ui-jqgrid-htable>thead>.ui-jqgrid-labels>.ui-th-column>div"),
-        colModel = $this.jqGrid("getGridParam", "colModel"),
-        n = $.isArray(colModel) ? colModel.length : 0,
+        colModel 	= $this.jqGrid("getGridParam", "colModel"),
+        n 			= $.isArray(colModel) ? colModel.length : 0,
         idColHeadPrexif = "jqgh_" + obj.id + "_";
 
     $cells.wrapInner("<span class='wrapper-width' style='white-space: nowrap'></span>");
     $colHeaders.wrapInner("<span class='wrapper-width'></span>");
 
-    maxColWidth = [];
-    headerWidth = [];
-    sumCellWidth = 0;
-    countColWidth = 0;
+    maxColWidth 	= [];
+    headerWidth		= [];
+    sumCellWidth 	= 0;
+    countColWidth 	= 0;
 
     for (iCol = 0; iCol < n; iCol++) {
     	cm = colModel[iCol];
@@ -24,8 +24,8 @@ function autoResize_<?php echo $grid_id?>(obj)
         headerWidth[iCol] = colWidth;
         maxColWidth[iCol] = colWidth;
     	for (iRow = 0, rows = obj.rows; iRow < rows.length; iRow++) {
-    		row = rows[iRow];
-	    	cellWidth = parseInt($(row.cells[iCol]).find(".wrapper-width").outerWidth());
+    		row 		= rows[iRow];
+	    	cellWidth 	= parseInt($(row.cells[iCol]).find(".wrapper-width").outerWidth());
 	    	if ($(row).hasClass("jqgrow") && !cm.hidden) {
 	    		if(cm.name == "cb")
             		cellWidth = 25;
@@ -34,7 +34,7 @@ function autoResize_<?php echo $grid_id?>(obj)
 	    		maxColWidth[iCol] = Math.max(maxColWidth[iCol], cellWidth);
 	    	}
     	}
-    	if(!cm.hidden && cm.name != "cb" && cm.name != "rn"){
+    	if(!cm.hidden && cm.name != "cb" && cm.name != "rn") {
     		// if(colWidth >= maxColWidth[iCol]){
 	    		countColWidth += 1;
 	    		sumCellWidth += maxColWidth[iCol];
@@ -44,8 +44,8 @@ function autoResize_<?php echo $grid_id?>(obj)
     	}
     }
     
-    tableWidth = 1050;
-    addWidth = 0;
+    tableWidth 	= 1050;
+    addWidth 	= 0;
     <?php if(isset($_SESSION["setting"]["grid_width"]) && !empty($_SESSION["setting"]["grid_width"])) {?>
     	tableWidth = <?php echo $_SESSION["setting"]["grid_width"] ?>;
     <?php }?>
@@ -177,7 +177,7 @@ function actAddFunc_<?php echo $grid_id?>()
 		{
 			jQuery(<?php echo $grid_id?>_element).jqGrid('addRowData',<?php echo $grid_id?>_new_record,<?php echo $grid_id?>_default_data,'last');
 			var records = jQuery(<?php echo $grid_id?>_element).jqGrid('getGridParam','records');
-			jQuery(<?php echo $grid_id?>_element).jqGrid('editCell',records,<?php echo $grid_id?>_column_focus+1,true);
+			// jQuery(<?php echo $grid_id?>_element).jqGrid('editCell',records,<?php echo $grid_id?>_column_focus+1,true);
 		}<?php echo $grid_id?>_new_record++;
 	}
 	else if(checked_header == false) { // untuk mengakomodir cara lama 

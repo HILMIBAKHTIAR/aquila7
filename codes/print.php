@@ -27,13 +27,13 @@
 	if($ajax == 1){
 		$index_type = $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["index_type"];
 		if ($index_type == "report"){
-			$conn_header = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-			if ($conn_header->connect_error) { die("Connection failed: " . $conn_header->connect_error); }
+			$mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+			if ($mysqli->connect_error) { die("Connection failed: " . $mysqli->connect_error); }
 
 			$sql = $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["query_select"];
 		    $sql = str_replace('start','0', $sql);
 		    $sql = str_replace('limit','18446744073709551615', $sql);
-		    $query = $conn_header->query($sql);
+		    $query = $mysqli->query($sql);
 
 		    $i  = 0;
 	        $no = 0;

@@ -119,6 +119,7 @@ if($preference_rows > 0) {
     $_SESSION["menu_position"]  = $preference["menu_position"];
 }
 // END PREFERENCE
+
 /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-03;*/
 $_SESSION["setting"]["restriction_account"] = generate_restriction_account($con);
 $_SESSION["setting"]["logout"]              = "index.php";

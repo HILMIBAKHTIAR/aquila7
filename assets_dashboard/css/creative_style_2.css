@@ -535,6 +535,9 @@ table td.center {
     overflow-y: scroll;
     padding-top: 40px;
 }
+.sidebar-show .index_box_content {
+    padding-bottom: 50px;
+} 
 #content {
     padding-bottom: 2960px !important;
 }
@@ -548,19 +551,115 @@ table td.center {
    border: none;
    /*border-right: 1px solid #e7e7e7;*/
 }
-.sorting_disabled{
+.sorting_disabled {
     background: white !important;
 }
-.dt-buttons{
-    display: inline-block;
+/*START added-by:thomy@inspiraworld.com;last_updated:2020-09-03;*/
+.dt-buttons {
+   left: 0px; 
+   padding-top: 0px;
+}
+.dt-button {
+    float: left;
+    margin : 0px 0px 5px 5px;
+    /*color: #333333;*/
     position: relative;
-    left: 10px;
+    transition: all 0.3s ease 0s;
+    z-index: 99;
+    background: transparent;
+    /*padding-right: 21px;*/
+    /*border: none;
+    border: 1px solid #eee;
+    padding: 5px 6px;
+    width: 37px;*/
+}
+.dt-button-collection {
+    position: absolute;
+    width: 156px;
+    z-index: 90999999;
+    background: #fff;
+    margin-top: 8px;
+    margin-left: 5px;
+    left: 0px !important;
+    top: 37px !important;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+.dt-colvis {
+    display: block;
+    position: relative;
+    float: left;
+}
+.dt-left-button > .dt-button, .dt-left-button > .dt-colvis > .dt-button{
+    margin-top: 7px;
+}
+button.dt-button.buttons-columnVisibility:hover, button.dt-button.buttons-columnVisibility.active:hover {
+    background: #ddd;
+}
+.dataTables_wrapper .dt-left-button {
+    overflow: unset!important; 
+}
+.dataTables_length {
+    /*margin-right: 20px;*/
+}
+.buttons-columnVisibility {
+    width: 100%;
+    margin-top: 0px;
+    border: none;
+    background: #eee;
+    margin: 0px;
+    padding: 10px 7px 10px 7px;
+}
+.buttons-columnVisibility:has(span){
+    display: none !important;
+}
+.dt-left-button > .dt-button:first-child {
+    margin-left: 15px;
+} 
+.dt-left-button > .dt-button:last-child {
+    margin-right: 15px;
+}  
+button.dt-button.buttons-columnVisibility.active {
+    background: #fff;
+}
+@media only screen and (max-width: 990px) {
+   .dt-buttons {
+       left: unset!important;
+       transform: unset!important;
+       float: right;
+   }
+}
+@media only screen and (max-width: 768px) {
+   div.dataTables_wrapper div.dataTables_filter input{
+           margin-left: 0px; 
+   }
+   .dt-buttons {
+       width: 161px;
+   }
+   .dt-buttons {
+       z-index: 90999999;
+   }
+   .bt-search {
+       right: 10px;
+       top: 21px;
+   }
+   .dt-button, .dt-colvis{
+      float: unset;
+      display: inline-block;
+   }
+   .dt-button-collection{
+      z-index: 99999;
+   }
+   .dataTables_wrapper .dt-left-button {
+       text-align: center;
+   }
+   .dt-buttons {
+       left: unset!important;
+       transform: unset!important;
+       float: unset;
+   }
 }
 .btn-export{
     width: 30px;
-    background: none;
-    margin: auto;
-    display: inline-block;
     font-size: 14px;
     text-transform: uppercase;
     transition: all 0.4s ease 0s;
@@ -591,56 +690,15 @@ table td.center {
     color: white;
 }
 .btn-colvis{
-    border: 1px solid #564c4d;
-    color: #564c4d;
+    border: 1px solid #36454f;
+    color: #36454f;
 }
 .btn-colvis:hover{
-    background: #564c4d;
-    border: 1px solid #564c4d;
+    background: #36454f;
+    border: 1px solid #36454f;
     color: white;
 }
-/*START added-by:thomy@inspiraworld.com;last_updated:2020-09-03;*/
-/*.dt-button-collection {
-    position: absolute;
-    width: 156px;
-    left: 0px!important;
-    z-index: 99;
-    background: #fff;
-    border: 1px solid #ccc;
-    margin-top: 5px;
-}
-.dt-buttons button {
-    float: left;
-    margin-right: 5px;
-    color: #333333;
-    position: relative;
-    transition: all 0.3s ease 0s;
-    z-index: 99;
-    background: transparent;
-    padding-right: 21px;
-    border: none;
-    border: 1px solid #eee;
-    padding: 10px 15px;
-}
-.dt-buttons {
-    width: 50%;
-}
-@media only screen and (max-width: 990px) {
-   div.dataTables_wrapper div.dataTables_filter input{
-           margin-left: 0px; 
-   }
-   .dt-buttons {
-       width: 161px;
-   }
-   .dt-buttons {
-       z-index: 90999999;
-   }
-   .bt-search {
-       right: 10px;
-       top: 21px;
-   }
-}*/
-/*END added-by:thomy@inspiraworld.com;last_updated:2020-09-03;*/
+/*END added-by:thomy@inspiraworld.com;last_updated:2020-09-03;
 
 /*.dataTables_scrollBody{
     border-bottom: 1px solid #bbb;
@@ -1163,7 +1221,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
     padding-left: 0px;
 }
 #index_content, .box-content {
-    overflow-y: hidden;
+    /*overflow-y: hidden;*/
     border-color: #e7eaec;
     border-image: none;
     border-style: solid solid none;
@@ -1404,8 +1462,8 @@ a.show-sidebar:hover .hamburger{
     left: 10%;
     max-width: calc(80% - 17px);
     z-index: 9;*/
-    position: fixed;
-    width: calc(80% - 17px);
+    /*position: fixed;
+    width: calc(80% - 17px);*/
     display: block;
     margin-top: -40px;
 }
@@ -1426,6 +1484,10 @@ a.show-sidebar:hover .hamburger{
 }
 .blockUI.blockMsg.blockPage .ui-jqgrid-titlebar-close.HeaderButton{
     display: none;
+}
+.blockUI.blockMsg.blockPage .ui-jqgrid-hdiv{
+    /*margin-top: 70px!important;*/
+    /*overflow: unset;*/
 }
 .blockUI.blockMsg.blockPage div.ui-jqgrid-bdiv{
     /*margin-top: 70px!important;*/
@@ -1572,10 +1634,10 @@ table.fixedHeader-floating.no-footer, table.fixedHeader-floating {
 #sidebar-left::-webkit-scrollbar-thumb{
     background-color: #2E383C;
 }
-.table-datatable tr th:first-child{
+/*.table-datatable tr th:first-child{
     text-align: center;
     padding: 0px 15px!important;
-}
+}*/
 ul.dropdown-menu{
     display: none;
 }
@@ -1822,7 +1884,7 @@ li.open ul.dropdown-menu li a:hover {
         width: auto!important;
         z-index: 99;
         margin-top: 0px;
-        overflow: visible;
+        /*overflow: visible;*/
     }
     .blockUI.blockMsg.blockPage .ui-th-ltr, .ui-jqgrid .ui-jqgrid-htable th.ui-th-ltr {
         border-top: 1px solid #ddd;
@@ -2995,6 +3057,45 @@ span.badges {
     display: table;
     width: auto;
     margin-top: 8px;
+    font-weight: 700 !important;
+    letter-spacing: 1px;
+    background: none;
+    -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+    transition: all 0.3s ease 0s;
+}
+.btn-antrian {
+    padding: 4px 12px;
+    margin: auto;
+    margin-left: 3px;
+    width: 100px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    transition: all 0.4s ease 0s;
+}
+.btn-antrian > i{
+    margin-top: -3px;
+    font-size: 14px;
+}
+.btn-antrian.go {
+    background-color: #00b894;
+    color: white;
+}
+.btn-antrian.now {
+    background-color: #0abde3;
+    color: white;
+}
+.btn-antrian.call {
+    background-color: #ffeaa7;
+    color: black;
+}
+.btn-antrian.add {
+    background-color: #273c75;
+    color: white;
+}
+.btn-antrian:hover {
+    background: white !important;
+    color: black;
     font-weight: 700 !important;
     letter-spacing: 1px;
     background: none;

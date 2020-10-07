@@ -167,7 +167,7 @@ if (empty($form_id) || $form_id == "field") {
             if (!isset($field["input_attr"]["value"]) && isset($field["input_value"]))
                 $field["input_attr"]["value"] = $field["input_value"];
             if (isset($field["input_label"]) && !empty($field["input_label"]))
-                $field["input_attr"]["style"] = " width:auto; display:inline-block;";
+                $field["input_attr"]["style"] = " width:auto; display:inline-block;text-transform:capitalize;";
             if (isset($field["input_style"])  && !empty($field["input_style"]))
                 $field["input_attr"]["style"] .= $field["input_style"];
             if ($form["mode"] == "view" && !strstr($field["input_attr"]["class"], "btn-") && $field["input_element"] != "button") {
@@ -289,15 +289,12 @@ if (empty($form_id) || $form_id == "field") {
                     $browse_override = 1;
                     include $config["webspira"] . "codes/browse.php";
                 }
+                $value  = array("","");
+                $search = "";
                 if (isset($field["input_value"])){
-                    $value = explode("|", $field["input_value"]);
+                    $value  = explode("|", $field["input_value"]);
                     $search = implode("|", array_slice($value, 0, -1));
                 }
-                else
-                    $value = array(
-                        "",
-                        ""
-                    );
                 $autofocus = "";
                 if ($field["input_attr"]["autofocus"] == "autofocus")
                     $autofocus = " autofocus='" . $field["input_attr"]["autofocus"] . "' ";
@@ -345,7 +342,7 @@ if (empty($form_id) || $form_id == "field") {
                     $field["input_label_attr"]["class"] = "";
                 if (!empty($field["input_label_class"]))
                     $field["input_label_attr"]["class"] = $field["input_label_class"];
-                $field["input_label_attr"]["style"] = "width:auto; margin-left:5px;";
+                $field["input_label_attr"]["style"] = "width:auto; margin-left:5px;text-transform:capitalize;";
                 if (isset($field["input_label_style"]) && !empty($field["input_label_style"]))
                     $field["input_label_attr"]["style"] .= $field["input_label_style"];
                 $field["input_label_attr"]["class"] = "control-label field_group_" . $i_field . " " . $field["input_label_attr"]["class"];

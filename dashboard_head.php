@@ -97,9 +97,6 @@
 		<!-- DATATABLE EXPORT BUTTONS -->
 <?php }?>
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/sweetalert.min.js" type="text/javascript"></script>
-		<?php include $page_dir.$config["webspira"]."dashboard_java.php";?>
-		<?php include $page_dir."assets_custom/php/custom_js.php";?>
-		<script src="<?php echo $page_dir?>assets_custom/js/custom.js" type="text/javascript"></script>
 	<!--<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/jquery.form.js" type="text/javascript"></script>-->
 <!------finish individual files as needed-------------------------------------------------------------------------------------------------------------------------------------------->
 <!------start functions for this theme + document.ready processing------------------------------------------------------------------------------------------------------------------->
@@ -121,6 +118,6 @@
 --->
 <?php if($_SESSION["login"]["framework"]=="pelangi"){?>
 		<link href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/css/<?php echo $config["style"]?>" rel="stylesheet" />
-		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/creative_js.js" type="text/javascript"></script>
+		<?php include $page_dir.$config["webspira"]."dashboard_java.php";?>
 <?php }?>
 <?php /*created_by:patricklipesik@gmail.com,release_date:2019-12-16*/ ?>

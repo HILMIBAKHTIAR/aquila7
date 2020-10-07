@@ -69,13 +69,17 @@ else{
         $sql .= " )";
         $query=mysqli_query($con, $sql) or die("ajax-grid-data.php: get Data With Search");
         $totalFiltered = mysqli_num_rows($query); // when there is a search parameter then we have to modify total number filtered rows as per search result without limit in the query 
-        if($requestData['order'][0]['column'] > 0){
-          if($index_table["column"][$requestData['order'][0]['column']]["search"] == 1){
-            if(!empty($index_table["column"][$requestData['order'][0]['column']]["sort"]) AND $index_table["column"][$requestData['order'][0]['column']]["sort"] != "empty"){
-                $orders = $index_table["column"][$requestData['order'][0]['column']]["sort"]."   ".$requestData['order'][0]['dir']; 
+        $orders = '';
+        if(array_key_exists('order', $requestData)){
+            if($requestData['order'][0]['column'] > 0){
+              if($index_table["column"][$requestData['order'][0]['column']]["search"] == 1){
+                if(!empty($index_table["column"][$requestData['order'][0]['column']]["sort"]) AND $index_table["column"][$requestData['order'][0]['column']]["sort"] != "empty"){
+                    $orders = $index_table["column"][$requestData['order'][0]['column']]["sort"]."   ".$requestData['order'][0]['dir']; 
+                  }
               }
-          }
-        }else{
+            }
+        }
+        else{
           $orders = $_POST['query_order'];
         }
         if(!empty($orders)){
@@ -89,13 +93,17 @@ else{
         if(!empty($_POST['query_where'])){
           $sql .= " WHERE ".$_POST['query_where'];
         }
-        if($requestData['order'][0]['column'] > 0){
-          if($index_table["column"][$requestData['order'][0]['column']]["search"] == 1){
-            if(!empty($index_table["column"][$requestData['order'][0]['column']]["sort"]) AND $index_table["column"][$requestData['order'][0]['column']]["sort"] != "empty"){
-                $orders = $index_table["column"][$requestData['order'][0]['column']]["sort"]."   ".$requestData['order'][0]['dir']; 
+        $orders = '';
+        if(array_key_exists('order', $requestData)){
+            if($requestData['order'][0]['column'] > 0){
+              if($index_table["column"][$requestData['order'][0]['column']]["search"] == 1){
+                if(!empty($index_table["column"][$requestData['order'][0]['column']]["sort"]) AND $index_table["column"][$requestData['order'][0]['column']]["sort"] != "empty"){
+                    $orders = $index_table["column"][$requestData['order'][0]['column']]["sort"]."   ".$requestData['order'][0]['dir']; 
+                }
+              }
             }
-          }
-        }else{
+        }
+        else{
           $orders = $_POST['query_order'];
         }
         if(!empty($orders)){
@@ -137,7 +145,7 @@ while ($data = mysqli_fetch_array($query)) {
             $width = "";
             if (!empty($column["width"]))
                 $width = " style='width:" . $column["width"] . "px;' ";
-            if ($table["id"] == "index_report" && $width != "")
+            if ($index_table["id"] == "index_report" && $width != "")
                 $width = " style='width:" . $column["width"] . "px!important;min-width:" . $column["width"] . "px!important;' ";
             $row = "<td " . $align . " " . $width . " class='col_detail_numb_" . $column_numb . " col_detail_name_" . $column["name"] . " " . $column["class"] . "'>" . $index_table["data"][$i][$column["name"]] . "</td>";
             $column_numb++;

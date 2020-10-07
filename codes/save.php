@@ -460,25 +460,27 @@ if ($save["mode"] == "add") {
                             $insert_values .= ",";
                         }
                         if ($h == 0){
-                            if (sizeof($data_format) == 3 && $data_format[1] == 'date') {
-                                /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-                                if (!empty($_SESSION["setting"]["date_class_autoformat"]) && search_date_class($data_format[2], "coltemplate_date_class_autoformat")) {
-                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_date"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d");
-                                }
-                                if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) && search_datetime_class($data_format[2], "coltemplate_datetime_class_autoformat")) {
-                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_datetime"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d H:i:s");
-                                }
-                                if (!empty($_SESSION["setting"]["period_class_autoformat"]) && search_period_class($data_format[2], "coltemplate_period_class_autoformat")) {
-                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_period"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-01");
-                                }
-                                /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
+                            if (sizeof($data_format) == 3 && $data_format[1] == 'date') 
                                 $insert_fields .= $data_format[0];
-                                $insert_values .= "'" . addslashes(str_replace("\t", " ", $data_value)) . "'";   
-                            }
-                            else{
+                            else
                                 $insert_fields .= $field_name;
-                                $insert_values .= "'" . addslashes(str_replace("\t", " ", $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name])) . "'";
+                        }
+                        if (sizeof($data_format) == 3 && $data_format[1] == 'date') {
+                            /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
+                            if (!empty($_SESSION["setting"]["date_class_autoformat"]) && search_date_class($data_format[2], "coltemplate_date_class_autoformat")) {
+                                $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_date"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d");
                             }
+                            if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) && search_datetime_class($data_format[2], "coltemplate_datetime_class_autoformat")) {
+                                $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_datetime"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d H:i:s");
+                            }
+                            if (!empty($_SESSION["setting"]["period_class_autoformat"]) && search_period_class($data_format[2], "coltemplate_period_class_autoformat")) {
+                                $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_period"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-01");
+                            }
+                            /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
+                            $insert_values .= "'" . addslashes(str_replace("\t", " ", $data_value)) . "'";   
+                        }
+                        else{
+                            $insert_values .= "'" . addslashes(str_replace("\t", " ", $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name])) . "'";
                         }
                         $j++;
                     }
