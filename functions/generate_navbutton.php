@@ -1,5 +1,5 @@
 <?php
-function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|add", $page = "", $no = "", $url = "")
+function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|add|filter_column", $page = "", $no = "", $url = "")
 {
     if (empty($page))
         $page = "edit";
@@ -11,7 +11,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         $url = $_SESSION["g.url"];
     if ($page == "index") {
         $icon_class   = "fa fa-info";
-        $button_class = "btn-info";
+        $button_class = "btn-midnight";
         $title        = "View";
         if ($_SESSION["login"]["framework"] == "webspira")
             $button_title = $title;
@@ -19,15 +19,15 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
     }
     if (strstr($features, "post")) {
         $icon_class   = "fa fa-floppy-o";
-        $button_class = "btn-success";
+        $button_class = "btn-primary";
         $title        = "Post";
         if ($_SESSION["login"]["framework"] == "webspira")
             $button_title = $title;
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["anti_mode"]                 = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "button";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " post";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " post dim";
             $edit_navbutton["field"][$i]["input_attr"]["type"]        = "submit";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
@@ -37,7 +37,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
     }
     if (strstr($features, "save")) {
         $icon_class   = "fa fa-floppy-o";
-        $button_class = "btn-success";
+        $button_class = "btn-midnight";
         $title        = "Save";
         if (!empty($_SESSION["setting"]["navbutton_save"])) {
             $navbutton = explode("|", $_SESSION["setting"]["navbutton_save"]);
@@ -53,8 +53,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["anti_mode"]                 = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "button";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " save";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " save dim";
             $edit_navbutton["field"][$i]["input_attr"]["type"]        = "submit";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
@@ -80,8 +80,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["pro_mode"]                  = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " edit";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " edit dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
@@ -109,8 +109,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["pro_mode"]                  = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " delete";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " delete dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
@@ -119,12 +119,12 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
             /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
             $i++;
         } elseif ($page == "index") {
-            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' href='" . $url . "&sm=delete&no=" . $no . "'><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
+            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' onclick=\"link_confirmation('" . get_message(700) . "','" . $url . "&sm=delete&no=" . $no . "', '','" . $title . "');\"> <i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
         }
     }
     if (strstr($features, "approve") && $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["priv"]["approve"] == 1) {
-        $icon_class   = "fa fa-check-square-o";
-        $button_class = "btn-success";
+        $icon_class   = "fa fa-check";
+        $button_class = "btn-primary";
         $title        = "Approve";
         if (!empty($_SESSION["setting"]["navbutton_approve"])) {
             $navbutton = explode("|", $_SESSION["setting"]["navbutton_approve"]);
@@ -140,8 +140,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["pro_mode"]                  = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " approve";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " approve dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
@@ -150,7 +150,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
             /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
             $i++;
         } elseif ($page == "index") {
-            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' href='" . $url . "&sm=approve&no=" . $no . "'><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
+            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' onclick=\"link_confirmation('" . get_message(700) . "','" . $url . "&sm=approve&no=" . $no . "', '', '" . $title . "')\"><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
         }
     }
     if (strstr($features, "reject") && $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["priv"]["reject"] == 1) {
@@ -171,8 +171,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["pro_mode"]                  = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " reject";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " reject dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
@@ -181,12 +181,12 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
             /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
             $i++;
         } elseif ($page == "index") {
-            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' href='" . $url . "&sm=reject&no=" . $no . "'><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
+            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' onclick=\"link_confirmation('" . get_message(700) . "','" . $url . "&sm=reject&no=" . $no . "', '', '" . $title . "')\"><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
         }
     }
-    if (strstr($features, "print_invoice") && $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["priv"]["print"] == 1) {
+    if (strstr($features, "print") && $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["priv"]["print"] == 1) {
         $icon_class   = "fa fa-print";
-        $button_class = "btn-primary";
+        $button_class = "btn-info";
         $title        = "Print";
         if (!empty($_SESSION["setting"]["navbutton_print"])) {
             $navbutton = explode("|", $_SESSION["setting"]["navbutton_print"]);
@@ -202,8 +202,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["pro_mode"]                  = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " invoice";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " invoice dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
@@ -217,7 +217,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
     }
     if (strstr($features, "export_print")) {
         $icon_class   = "fa fa-print";
-        $button_class = "btn-primary";
+        $button_class = "btn-midnight";
         $title        = "Print";
         if (!empty($_SESSION["setting"]["navbutton_export_print"])) {
             $navbutton = explode("|", $_SESSION["setting"]["navbutton_export_print"]);
@@ -232,8 +232,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
             $button_title = $title;
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " exportprint";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " exportprint dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = "Print";
@@ -248,7 +248,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
     }
     if (strstr($features, "export_excel")) {
         $icon_class   = "fa fa-table";
-        $button_class = "btn-success";
+        $button_class = "btn-primary";
         $title        = "Excel";
         if (!empty($_SESSION["setting"]["navbutton_export_excel"])) {
             $navbutton = explode("|", $_SESSION["setting"]["navbutton_export_excel"]);
@@ -263,8 +263,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
             $button_title = $title;
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " exportexcel";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " exportexcel dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = "Export Excel";
@@ -292,8 +292,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["pro_mode"]                  = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " disapp";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " disapp dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
@@ -302,7 +302,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
             /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
             $i++;
         } elseif ($page == "index") {
-            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' href='" . $url . "&sm=disapprove&no=" . $no . "'><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
+            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' onclick=\"link_confirmation('" . get_message(700) . "','" . $url . "&sm=disapprove&no=" . $no . "', '', '" . $title . "')\"><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
         }
     }
     if (strstr($features, "close") && $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["priv"]["close"] == 1) {
@@ -323,8 +323,8 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["pro_mode"]                  = "view";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " tutup";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " tutup dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
@@ -333,7 +333,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
             /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-13;*/
             $i++;
         } elseif ($page == "index") {
-            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' href='" . $url . "&sm=close&no=" . $no . "'><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
+            $edit_navbutton .= "<a class='ask btn " . $button_class . " btn-app-sm' onclick=\"link_confirmation('" . get_message(700) . "','" . $url . "&sm=close&no=" . $no . "', '" . $title . "')\"><i class='" . $icon_class . "' title='" . $title . "'></i></a> ";
         }
     }
     if (strstr($features, "back")) {
@@ -354,21 +354,21 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
         if ($page == "edit") {
             $edit_navbutton["field"][$i]["anti_mode"]                 = "edit";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
-            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " back";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " back dim";
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
             $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
             $edit_navbutton["field"][$i]["input_attr"]["href"]        = "dashboard.php" . $url;
             $i++;
             // $icon_class   = "fa fa-reply";
-            $button_class = "btn-danger";
+            $button_class = "btn-danger dim";
             $title        = "Cancel";
             if ($_SESSION["login"]["framework"] == "webspira")
                 $button_title = $title;
             $edit_navbutton["field"][$i]["pro_mode"]                  = "edit";
             $edit_navbutton["field"][$i]["input_element"]             = "a";
-            $edit_navbutton["field"][$i]["input_float"]               = "left";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
             $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class;
             $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
             $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
@@ -379,7 +379,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
     }
     if (strstr($features, "reload")) {
         $icon_class   = "fa fa-refresh";
-        $button_class = "btn-default";
+        $button_class = "btn-default dim";
         $title        = "Reload";
         if (!empty($_SESSION["setting"]["navbutton_reload"])) {
             $navbutton = explode("|", $_SESSION["setting"]["navbutton_reload"]);
@@ -405,9 +405,27 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
             $i++;
         }
     }
+    if (strstr($features, "filter_column")) {
+        $icon_class   = "fa fa-columns";
+        $button_class = "btn-success dim";
+        $title        = "Filter Column";
+        if ($_SESSION["login"]["framework"] == "webspira")
+            $button_title = $title;
+        if ($page == "edit") {
+            $edit_navbutton["field"][$i]["pro_mode"]                  = "index";
+            $edit_navbutton["field"][$i]["input_element"]             = "a";
+            $edit_navbutton["field"][$i]["input_float"]               = "right";
+            $edit_navbutton["field"][$i]["input_attr"]["class"]       = $button_class . " filter_column";
+            $edit_navbutton["field"][$i]["input_attr"]["value"]       = "<i class='" . $icon_class . "' title='" . $title . "'></i> " . $button_title;
+            $edit_navbutton["field"][$i]["input_attr"]["data-toggle"] = "tooltip";
+            $edit_navbutton["field"][$i]["input_attr"]["title"]       = $title;
+            // $edit_navbutton["field"][$i]["input_attr"]["onclick"]     = "location.href=('" . $url . "&sm=reload')";
+            $i++;
+        }
+    }
     if (strstr($features, "add") && $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["priv"]["add"] == 1) {
         $icon_class   = "fa fa-plus";
-        $button_class = "btn-primary";
+        $button_class = "btn-midnight dim";
         $title        = "Add";
         if (!empty($_SESSION["setting"]["navbutton_add"])) {
             $navbutton = explode("|", $_SESSION["setting"]["navbutton_add"]);
@@ -434,7 +452,7 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
     }
     if (strstr($features, "help")) {
         $icon_class   = "fa fa-question";
-        $button_class = "btn-info";
+        $button_class = "btn-info dim";
         $title        = "Help";
         if (!empty($_SESSION["setting"]["navbutton_help"])) {
             $navbutton = explode("|", $_SESSION["setting"]["navbutton_help"]);
@@ -474,5 +492,5 @@ function generate_navbutton($edit_navbutton, $features = "save|edit|back|reload|
 }
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

@@ -9,4 +9,4 @@
 		}
 		return false;
 	} ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

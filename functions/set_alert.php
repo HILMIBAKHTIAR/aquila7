@@ -23,5 +23,5 @@ function set_alert($message, $type = "", $die = "", $url = "", $m = "", $f = "")
 }
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

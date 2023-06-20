@@ -1,2 +1,2 @@
 <?php function generate_action($no=0,$url="",$actions="view|edit"){if(empty($url))$url=$_SESSION["g.url"];$html=" ";if(strstr($actions,"view"))$html.="<a class='btn btn-info btn-app-sm' href='".$url."&sm=edit&a=view&no=".$no."'><i class='fa fa-info' title='View'></i></a> ";if(strstr($actions,"edit"))$html.="<a class='btn btn-warning btn-app-sm' href='".$url."&sm=edit&no=".$no."'><i class='fa fa-pencil' title='Edit'></i></a> ";if(strstr($actions,"delete"))$html.="<a class='ask btn btn-danger btn-app-sm' href='".$url."&sm=delete&no=".$no."'><i class='fa fa-trash' title='Delete'></i></a> ";return $html;} ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

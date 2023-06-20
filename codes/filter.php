@@ -44,6 +44,15 @@ $filter["field"][$i]["input_value"]      = $filter["urlback"];
 $i++;
 /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-19;*/
 if ($filter["btn-hide"] != 1) {
+    if($index["filter_column"] == 1){
+        $filter["field"][$i]["label"] = "Column";
+        $filter["field"][$i]["input"] = "selected_columns";
+        $str_select = "<select id='selected_columns' class='form-control' name='selected_columns[]' multiple='multiple'>";
+        $str_select .= "</select>";
+        $filter["field"][$i]["input_element"] = $str_select;
+        $i++;
+    }
+    
     $filter["field"][$i]["input_col"]           = "col-sm-12";
     $filter["field"][$i]["input_element"]       = "button";
     $filter["field"][$i]["input_attr"]["id"]    = "search";
@@ -70,5 +79,5 @@ if ($filter["auto_validate"] == 1) {
 }
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

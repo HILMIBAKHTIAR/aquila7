@@ -14,30 +14,38 @@ function autoResize_<?php echo $grid_id?>(obj)
     $colHeaders.wrapInner("<span class='wrapper-width'></span>");
 
     maxColWidth 	= [];
-    headerWidth		= [];
+    headerWidth 	= [];
     sumCellWidth 	= 0;
     countColWidth 	= 0;
 
     for (iCol = 0; iCol < n; iCol++) {
-    	cm = colModel[iCol];
-        colWidth = parseInt($("#" + idColHeadPrexif + $.jgrid.jqID(cm.name) + ">.wrapper-width").outerWidth()) + 10;
+    	cm 			= colModel[iCol];
+        colWidth 	= parseInt($("#" + idColHeadPrexif + $.jgrid.jqID(cm.name) + ">.wrapper-width").outerWidth()) + 10;
         headerWidth[iCol] = colWidth;
         maxColWidth[iCol] = colWidth;
-    	for (iRow = 0, rows = obj.rows; iRow < rows.length; iRow++) {
+    	for (iRow = 0, rows = obj.rows; iRow < rows.length; iRow++) 
+    	{
     		row 		= rows[iRow];
 	    	cellWidth 	= parseInt($(row.cells[iCol]).find(".wrapper-width").outerWidth());
-	    	if ($(row).hasClass("jqgrow") && !cm.hidden) {
+	    	if ($(row).hasClass("jqgrow") && !cm.hidden) 
+	    	{
 	    		if(cm.name == "cb")
             		cellWidth = 25;
             	else
             		cellWidth += 15;
+
+            	if(typeof cm.maxwidth !== 'undefined' && cellWidth > cm.maxwidth)
+            		cellWidth = cm.maxwidth;
+            	if(typeof cm.minwidth !== 'undefined' && cellWidth < cm.minwidth)
+            		cellWidth = cm.minwidth;
 	    		maxColWidth[iCol] = Math.max(maxColWidth[iCol], cellWidth);
 	    	}
     	}
-    	if(!cm.hidden && cm.name != "cb" && cm.name != "rn") {
+    	if(!cm.hidden && cm.name != "cb" && cm.name != "rn")
+    	{
     		// if(colWidth >= maxColWidth[iCol]){
-	    		countColWidth += 1;
-	    		sumCellWidth += maxColWidth[iCol];
+	    		countColWidth 	+= 1;
+	    		sumCellWidth 	+= maxColWidth[iCol];
     		// }
 		    // else
 		    // 	sumCellWidth += maxColWidth[iCol];
@@ -55,7 +63,8 @@ function autoResize_<?php echo $grid_id?>(obj)
    	else
    		addWidth = 0;
     
-    for (iCol = 0; iCol < n; iCol++) {
+    for (iCol = 0; iCol < n; iCol++) 
+    {
     	cm = colModel[iCol];
         if(!cm.hidden && cm.name != "rn" && cm.name != "cb")
         	maxColWidth[iCol] = maxColWidth[iCol] + addWidth; 
@@ -74,12 +83,10 @@ function autoResize_<?php echo $grid_id?>(obj)
     $('.wrapper-width').contents().unwrap();
 }
 
-function actGridComplete_<?php echo $grid_id?>()
+function actGridComplete_<?php echo $grid_id?>(obj = '')
 {
-	<?php echo $grid_id?>_is_load = 0;
 	if(<?php echo $grid_id?>_load == 0)
 	{
-		<?php echo $grid_id?>_is_load = 1;
 		var records = jQuery(<?php echo $grid_id?>_element).jqGrid('getGridParam','records');
 		/*
 		for(var i = 1; i <= records; i++)
@@ -90,8 +97,8 @@ function actGridComplete_<?php echo $grid_id?>()
 		*/<?php echo $grid_id?>_new_record = (records*1) + 1;<?php echo $grid_id?>_load++;
 	}
 	grid_complete_<?php echo $grid_id?>();
-	if(!<?php echo $grid_id?>_is_load)
-		autoResize_<?php echo $grid_id?>(this);
+	if(obj != '')
+		autoResize_<?php echo $grid_id?>(obj);
 	vgrid_comp['<?php echo $grid_id?>'] = 'completed'; // new sync
 }
 
@@ -136,9 +143,22 @@ function actAfterEditCell_<?php echo $grid_id?>(rowid,cellname,value,iRow,iCol)
 function actBeforeSaveCell_<?php echo $grid_id?>(rowid,cellname,value,iRow,iCol)
 {
 //	alert('rowid='+rowid+' cellname='+cellname+' value='+value+' iRow='+iRow+' iCol='+iCol);
+	after_complete_<?php echo $grid_id?>(rowid,cellname);
 }
 function actAfterSaveCell_<?php echo $grid_id?>(rowid,cellname,value,iRow,iCol)
-{<?php echo $grid_id?>_allow_delete = 1;
+{
+	<?php echo $grid_id?>_allow_delete = 1;
+	<?php if($edit["uppercase"] == 1) { ?>
+		colModel = jQuery(<?php echo $grid_id?>_element).jqGrid("getGridParam", "colModel");
+		if (colModel[iCol].edittype != 'select')
+		{
+		// if(!colModel[iCol].hasOwnProperty("editoptions")) 
+		// {
+			var data = jQuery(<?php echo $grid_id?>_element).jqGrid("getCell", rowid, cellname);
+			jQuery(<?php echo $grid_id?>_element).jqGrid("setCell", rowid, cellname, data.toUpperCase());
+		// }
+		}
+    <?php } ?>
 	if(rowid >= 0 && value != '')
 	{
 		if(<?php echo $grid_id?>_selected_suggest)
@@ -177,7 +197,7 @@ function actAddFunc_<?php echo $grid_id?>()
 		{
 			jQuery(<?php echo $grid_id?>_element).jqGrid('addRowData',<?php echo $grid_id?>_new_record,<?php echo $grid_id?>_default_data,'last');
 			var records = jQuery(<?php echo $grid_id?>_element).jqGrid('getGridParam','records');
-			// jQuery(<?php echo $grid_id?>_element).jqGrid('editCell',records,<?php echo $grid_id?>_column_focus+1,true);
+			jQuery(<?php echo $grid_id?>_element).jqGrid('editCell',records,<?php echo $grid_id?>_column_focus+1,true);
 		}<?php echo $grid_id?>_new_record++;
 	}
 	else if(checked_header == false) { // untuk mengakomodir cara lama 
@@ -192,7 +212,7 @@ function actAddFunc_<?php echo $grid_id?>()
 	else if(checked_header != true && checked_header != false && checked_header != '') { // cara baru sudah spesifik
 		$.alert({
           title: 'ALERT',
-          content: '<?php echo get_message(801)?>\n\n'+checked_header,
+          content: '<?php echo get_message(801)?><br>'+checked_header+'<?php echo get_message(805)?>',
           icon: 'fa fa-warning',
           theme: 'modern',
           type: 'red'		                      
@@ -300,6 +320,8 @@ function checkValueCells_<?php echo $grid_id?>(rowid,cells)
 			failed += cell[1];
 		}
 	}
+	if(failed != '')
+		failed += '<?php echo get_message(804)?>';
 	return failed;
 }
 function checkGrid_<?php echo $grid_id?>(mode = 0)
@@ -319,9 +341,8 @@ function checkGrid_<?php echo $grid_id?>(mode = 0)
 					valid_grid = false;
 					var iRow = $('#'+$.jgrid.jqID(i))[0].rowIndex;
 					if(valid_row != true && valid_row != false && valid_row != '')
-						valid_grid_msg += '\n'+'<?php echo get_message(803)?>'+iRow+'<?php echo get_message(804)?>'+valid_row;
+						valid_grid_msg += '<br><b>'+'<?php echo get_message(803)?>'+iRow+'</b><br>'+valid_row+'<?php echo get_message(805)?>';
 				}
-				
 			}
 		}
 	}
@@ -331,13 +352,13 @@ function checkGrid_<?php echo $grid_id?>(mode = 0)
 	{
 		if(mode > 0){
 			valid_grid = false;
-			valid_grid_msg = 'Pastikan semua kolom di dalam grid <b><?php echo $grid_caption?></b> sudah tertutup agar proses save dapat dilanjutkan.';
+			valid_grid_msg = 'Pastikan semua kolom di dalam grid <b><?php echo $grid_caption?></b> sudah tertutup agar proses save dapat dilanjutkan.<?php echo get_message(805)?>';
 		}else{
 			closeActiveCell_<?php echo $grid_id?>();
 		}
 	}
 	if(valid_grid == false && valid_grid_msg != '')
-		valid_grid = '<?php echo get_message(802,$grid_caption)?>\n'+valid_grid_msg;
+		valid_grid = '<?php echo get_message(802,$grid_caption)?>'+valid_grid_msg;
 	return valid_grid;
 }
 function checkUnique_<?php echo $grid_id?>()
@@ -367,7 +388,7 @@ function checkUnique_<?php echo $grid_id?>()
 							//	console.log('arr_ori:'+arr_ori);
 							//	console.log('arr:'+arr);
 								var iRow = $('#'+$.jgrid.jqID(row_duplicate))[0].rowIndex;
-								valid_unique_msg = '<?php echo get_message(802,$grid_caption)?>\n\n'+'<?php echo get_message(105)?>\n baris ke-'+iRow;
+								valid_unique_msg = '<br><?php echo get_message(802,$grid_caption)?>'+'<?php echo get_message(105)?><br>'+'<?php echo get_message(803)?>'+iRow+'<?php echo get_message(805)?>';
 								return valid_unique_msg;
 							}
 							last = arr[k];
@@ -407,7 +428,7 @@ function checkUnique_<?php echo $grid_id?>()
 						//	console.log('arr_ori:'+arr_ori);
 						//	console.log('arr:'+arr);
 							var iRow = $('#'+$.jgrid.jqID(row_duplicate))[0].rowIndex;
-							valid_unique_msg = '<?php echo get_message(802,$grid_caption)?>\n\n'+'<?php echo get_message(105)?>\n baris ke-'+iRow;
+							valid_unique_msg = '<?php echo get_message(802,$grid_caption)?><br>'+'<?php echo get_message(105)?><br> baris ke-'+iRow+'<?php echo get_message(805)?>';
 							return valid_unique_msg;
 						}
 						last = arr[k];
@@ -453,7 +474,7 @@ function generateRealGrid_<?php echo $grid_id?>()// new sync
 	if(totalrow != lastrow)
 	{
 		var realgrid_caption = jQuery(<?php echo $grid_id?>_element).jqGrid('getGridParam','caption');
-		var realgrid_confirm = confirm(' Sistem tidak dapat mengkonfirmasi jumlah data pada grid <b>'+realgrid_caption+'</b> cocok dengan jumlah data yang akan disimpan ke dalam database. \n Proses Save yang melibatkan data dengan jumlah yang tidak cocok dapat mengakibatkan data tersebut corupt setelah disimpan. \n Harap meminta bantuan Administrator untuk memeriksa halaman ini. \n\n Atau Anda tetap ingin melanjutkan proses Save dan mengabaikan kemungkinan data corupt?');
+		var realgrid_confirm = confirm(' Sistem tidak dapat mengkonfirmasi jumlah data pada grid <b>'+realgrid_caption+'</b> cocok dengan jumlah data yang akan disimpan ke dalam database. <br> Proses Save yang melibatkan data dengan jumlah yang tidak cocok dapat mengakibatkan data tersebut corupt setelah disimpan. <br> Harap meminta bantuan Administrator untuk memeriksa halaman ini. <br><br> Atau Anda tetap ingin melanjutkan proses Save dan mengabaikan kemungkinan data corupt?');
 		if(realgrid_confirm == true)
 			var realgrid_answer = 'yes';
 		else
@@ -467,4 +488,4 @@ function generateRealGrid_<?php echo $grid_id?>()// new sync
 	
 	$('#<?php echo $grid_id?>_realgrid').html(html_realgrid);
 }</script><?php $grid_functions_html=ob_get_contents();ob_end_clean(); ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

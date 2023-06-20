@@ -16,12 +16,33 @@ function fill_value($edit, $data = [])
                 $number_type = search_number_type($edit["field"][$i]["input_attr"]["class"]);
             if (!empty($number_type))
                 $edit["field"][$i]["input_value"] = number_formatting($edit["field"][$i]["input_value"], $number_type);
-            $edit["field"][$i]["input_value"] = str_replace("\'", "'", $edit["field"][$i]["input_value"]);
+            if (search_picker_class($edit["field"][$i]["input_class"], "date_class_autoformat"))
+                if(str_replace("\'", "'", $edit["field"][$i]["input_value"]) != $_SESSION["setting"]["default_date"])
+                    $edit["field"][$i]["input_value"] = str_replace("\'", "'", $edit["field"][$i]["input_value"]);
+                else 
+                    $edit["field"][$i]["input_value"] = "";
+            else if (search_picker_class($edit["field"][$i]["input_class"], "datetime_class_autoformat"))
+                if(str_replace("\'", "'", $edit["field"][$i]["input_value"]) != $_SESSION["setting"]["default_datetime"])
+                    $edit["field"][$i]["input_value"] = str_replace("\'", "'", $edit["field"][$i]["input_value"]);
+                else
+                    $edit["field"][$i]["input_value"] = "";
+            else if (search_picker_class($edit["field"][$i]["input_class"], "month_class_autoformat"))
+                if(str_replace("\'", "'", $edit["field"][$i]["input_value"]) != $_SESSION["setting"]["default_date"])
+                    $edit["field"][$i]["input_value"] = str_replace("\'", "'", $edit["field"][$i]["input_value"]);
+                else
+                    $edit["field"][$i]["input_value"] = "";
+            else if (search_picker_class($edit["field"][$i]["input_class"], "year_class_autoformat"))
+                if(str_replace("\'", "'", $edit["field"][$i]["input_value"]) != $_SESSION["setting"]["default_date"])
+                    $edit["field"][$i]["input_value"] = str_replace("\'", "'", $edit["field"][$i]["input_value"]);
+                else
+                    $edit["field"][$i]["input_value"] = "";
+            else
+                 $edit["field"][$i]["input_value"] = str_replace("\'", "'", $edit["field"][$i]["input_value"]);
         }
     }
     return $edit;
 }
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

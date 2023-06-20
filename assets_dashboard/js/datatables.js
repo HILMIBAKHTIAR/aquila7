@@ -4196,7 +4196,10 @@
 			/* Update all other filter input elements for the new display */
 			var n = features.f;
 			var val = !this.value ? "" : this.value; // mental IE8 fix :-(
-	
+			/*START added_by:glennferio@inspiraworld.com,release_date:2020-12-16*/
+			if (val.length < 0) return false;
+			/*END added_by:glennferio@inspiraworld.com,release_date:2020-12-16*/
+
 			/* Now do the filter */
 			if ( val != previousSearch.sSearch ) {
 				_fnFilterComplete( settings, {
@@ -5881,7 +5884,7 @@
 		for ( i=0 ; i<nestedSort.length ; i++ )
 		{
 			srcCol = nestedSort[i][0];
-			/*EDITED BY GLENN*/
+			/*START edited_by:glennferio@inspiraworld.com,release_date:2020-12-16*/
 			if ( aoColumns[ srcCol ]) {
 				aDataSort = aoColumns[ srcCol ].aDataSort;
 	
@@ -5904,7 +5907,7 @@
 					} );
 				}
 			}
-			/*EDITED BY GLENN*/
+			/*END edited_by:glennferio@inspiraworld.com,release_date:2020-12-16*/
 		}
 	
 		return aSort;

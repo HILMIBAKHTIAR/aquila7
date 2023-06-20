@@ -119,7 +119,7 @@ if ($grid["column_autoaddrow"] == 1) {
 } else
     $grid["option"]["colNames"] = "[" . $grid["option"]["colNames"] . "]";
 $grid["option"]["colModel"] = "automatic";
-$grid["option"]["shrinkToFit"] = "false";
+// $grid["option"]["shrinkToFit"] = "true";
 $grid_html                  = "";
 if (!empty($grid["pre_script"]))
     $grid_html .= $grid["pre_script"];
@@ -174,6 +174,7 @@ if ($grid["navgrid"] == 1) {
     $grid_html .= "\n\t}, {}, {}, {}, {});";
 }
 $i = 0;
+$group_header_var = "";
 if (array_key_exists('colHeader', $grid)) {
     $i = 0;
     $group_header_var .= "[";
@@ -246,5 +247,5 @@ if (!empty($grid["others_script"])) {
 }
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

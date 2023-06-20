@@ -631,6 +631,9 @@ body.canvas-menu.mini-navbar nav.navbar-static-side {
 .btn-primary.btn-outline {
   color: #1ab394;
 }
+.btn-midnight.btn-outline {
+  color: #1c557b;
+}
 .btn-success.btn-outline {
   color: #1c84c6;
 }
@@ -644,6 +647,7 @@ body.canvas-menu.mini-navbar nav.navbar-static-side {
   color: #ed5565;
 }
 .btn-primary.btn-outline:hover,
+.btn-midnight.btn-outline:hover,
 .btn-success.btn-outline:hover,
 .btn-info.btn-outline:hover,
 .btn-warning.btn-outline:hover,
@@ -690,6 +694,47 @@ fieldset[disabled] .btn-primary:active,
 fieldset[disabled] .btn-primary.active {
   background-color: #1dc5a3;
   border-color: #1dc5a3;
+}
+.btn-midnight {
+  background-color: #1c557b;
+  border-color: #1c557b;
+  color: #FFFFFF;
+}
+.btn-midnight:hover,
+.btn-midnight:focus,
+.btn-midnight:active,
+.btn-midnight.active,
+.open .dropdown-toggle.btn-midnight,
+.btn-midnight:active:focus,
+.btn-midnight:active:hover,
+.btn-midnight.active:hover,
+.btn-midnight.active:focus {
+  background-color: #1e4c71;
+  border-color: #1e4c71;
+  color: #FFFFFF;
+}
+.btn-midnight:active,
+.btn-midnight.active,
+.open .dropdown-toggle.btn-midnight {
+  background-image: none;
+}
+.btn-midnight.disabled,
+.btn-midnight.disabled:hover,
+.btn-midnight.disabled:focus,
+.btn-midnight.disabled:active,
+.btn-midnight.disabled.active,
+.btn-midnight[disabled],
+.btn-midnight[disabled]:hover,
+.btn-midnight[disabled]:focus,
+.btn-midnight[disabled]:active,
+.btn-midnight.active[disabled],
+fieldset[disabled] .btn-midnight,
+fieldset[disabled] .btn-midnight:hover,
+fieldset[disabled] .btn-midnight:focus,
+fieldset[disabled] .btn-midnight:active,
+fieldset[disabled] .btn-midnight.active {
+  background-color: #1c577d;
+  border-color: #1c577d;
 }
 .btn-success {
   background-color: #1c84c6;
@@ -999,7 +1044,7 @@ fieldset[disabled] .btn-white.active {
   height: 90px;
   font-size: 42px;
 }
-button.dim {
+button.dim, a.dim {
   display: inline-block;
   text-decoration: none;
   text-transform: uppercase;
@@ -1012,46 +1057,52 @@ button.dim {
   font-weight: 600;
   margin-bottom: 20px !important;
 }
-button.dim:active {
+button.dim:active, a.dim:active {
   top: 3px;
 }
-button.btn-primary.dim {
+button.btn-primary.dim, a.btn-primary.dim {
   box-shadow: inset 0 0 0 #16987e, 0 5px 0 0 #16987e, 0 10px 5px #999999;
 }
-button.btn-primary.dim:active {
+button.btn-primary.dim:active, a.btn-primary.dim:active {
   box-shadow: inset 0 0 0 #16987e, 0 2px 0 0 #16987e, 0 5px 3px #999999;
 }
-button.btn-default.dim {
+button.btn-midnight.dim, a.btn-midnight.dim {
+  box-shadow: inset 0 0 0 #1c375c, 0 5px 0 0 #1c375c, 0 10px 5px #999999;
+}
+button.btn-midnight.dim:active, a.btn-midnight.dim:active {
+  box-shadow: inset 0 0 0 #1c375c, 0 2px 0 0 #1c375c, 0 5px 3px #999999;
+}
+button.btn-default.dim, a.btn-default.dim {
   box-shadow: inset 0 0 0 #b3b3b3, 0 5px 0 0 #b3b3b3, 0 10px 5px #999999;
 }
-button.btn-default.dim:active {
+button.btn-default.dim:active, a.btn-default.dim:active {
   box-shadow: inset 0 0 0 #b3b3b3, 0 2px 0 0 #b3b3b3, 0 5px 3px #999999;
 }
-button.btn-warning.dim {
+button.btn-warning.dim, a.btn-warning.dim {
   box-shadow: inset 0 0 0 #f79d3c, 0 5px 0 0 #f79d3c, 0 10px 5px #999999;
 }
-button.btn-warning.dim:active {
+button.btn-warning.dim:active, a.btn-warning.dim:active {
   box-shadow: inset 0 0 0 #f79d3c, 0 2px 0 0 #f79d3c, 0 5px 3px #999999;
 }
-button.btn-info.dim {
+button.btn-info.dim, a.btn-info.dim {
   box-shadow: inset 0 0 0 #1eacae, 0 5px 0 0 #1eacae, 0 10px 5px #999999;
 }
-button.btn-info.dim:active {
+button.btn-info.dim:active, a.btn-info.dim:active {
   box-shadow: inset 0 0 0 #1eacae, 0 2px 0 0 #1eacae, 0 5px 3px #999999;
 }
-button.btn-success.dim {
+button.btn-success.dim, a.btn-success.dim {
   box-shadow: inset 0 0 0 #1872ab, 0 5px 0 0 #1872ab, 0 10px 5px #999999;
 }
-button.btn-success.dim:active {
+button.btn-success.dim:active, a.btn-success.dim:active {
   box-shadow: inset 0 0 0 #1872ab, 0 2px 0 0 #1872ab, 0 5px 3px #999999;
 }
-button.btn-danger.dim {
+button.btn-danger.dim, a.btn-danger.dim {
   box-shadow: inset 0 0 0 #ea394c, 0 5px 0 0 #ea394c, 0 10px 5px #999999;
 }
-button.btn-danger.dim:active {
+button.btn-danger.dim:active, a.btn-danger.dim:active {
   box-shadow: inset 0 0 0 #ea394c, 0 2px 0 0 #ea394c, 0 5px 3px #999999;
 }
-button.dim:before {
+button.dim:before, a.dim:before {
   font-size: 50px;
   line-height: 1em;
   font-weight: normal;
@@ -1059,7 +1110,7 @@ button.dim:before {
   display: block;
   padding-top: 10px;
 }
-button.dim:active:before {
+button.dim:active:before, a.dim:active:before {
   top: 7px;
   font-size: 50px;
 }

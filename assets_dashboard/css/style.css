@@ -17,7 +17,6 @@ body {
 h1, .h1, h2, .h2, h3, .h3 {
   margin:0;
 }
-
 #logo {
   position:relative;
   background:#dbdbdb;
@@ -415,12 +414,12 @@ a.show-sidebar:hover {
   width: 83.33333333333334%;
 }
 .expanded {
-  overflow-y:scroll;
+  /*overflow-y:scroll;*/
   border: 0;
   z-index: 3000 !important;
   position: fixed;
-  width: 100%;
-  height: 100%;
+  /*width: 100%;*/
+  /*height: 100%;*/
   top: 0;
   left: 0;
   padding: 0px;
@@ -479,11 +478,11 @@ table.no-border-bottom tr:last-child td {
 }
 
 .table-datatable *, .table-datatable :after, .table-datatable :before {
-  margin: 0;
-  padding: 0;
-  -webkit-box-sizing: content-box;
+/*  margin: 0;
+  padding: 0;*/
+/*  -webkit-box-sizing: content-box;
   box-sizing: content-box;
-  -moz-box-sizing: content-box;
+  -moz-box-sizing: content-box;*/
 }
 .table-datatable label {
   position: relative;
@@ -515,10 +514,10 @@ table.no-border-bottom tr:last-child td {
 }
 
 /*start tambahan shiro*/
-  .table-datatable {
+/*  .table-datatable {
     position: relative!important;
     border-top: 1px solid #bbb!important;
-  }
+  */}
   .paging_bootstrap {
     height: 35px;
   }
@@ -730,7 +729,7 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
 .well pre code {
   white-space: normal;
 }
-.btn {
+/*.btn {
   border: 1px solid transparent;
   border-bottom: 3px solid transparent;
   text-decoration: none;
@@ -743,14 +742,14 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   font-weight: bold;
   text-align: center;
   line-height: 24px;
-  margin: 0 0 10px 0;
+  margin: 0 0 5px 0;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
   -moz-user-select: none;
   -webkit-user-select: none;
   outline: none !important;
-}
+}*/
 .btn-label-left span {
   position: relative;
   left: -10px;
@@ -763,9 +762,9 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   display: inline-block;
   padding: 0px 8px;
 }
-.btn i {
+/*.btn i {
   vertical-align: middle;
-}
+}*/
 .btn-app {
   width: 50px;
   height: 50px;
@@ -783,17 +782,17 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   padding: 0;
   font-size: 14px;
 }
-.btn-app-sm i {
+/*.btn-app-sm i {
   font-size: 14px;
   line-height: 28px;
   display: block;
-}
-.btn-circle {
+}*/
+/*.btn-circle {
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
   border: 2px solid rgba(0, 0, 0, 0.25);
-}
+}*/
 .btn.active {
   background-image: none;
   outline: 0;
@@ -844,14 +843,13 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   border-color: #CBCBCB;
 }
 .txt-default {color: #D8D8D8;}
-/*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
+
 .progress-bar-primary .ui-widget-header, .bg-primary, .btn-primary, .btn-primary.disabled, .btn-primary[disabled], fieldset[disabled] .btn-primary, .btn-primary.disabled:hover, .btn-primary[disabled]:hover, fieldset[disabled] .btn-primary:hover, .btn-primary.disabled:focus, .btn-primary[disabled]:focus, fieldset[disabled] .btn-primary:focus, .btn-primary.disabled:active, .btn-primary[disabled]:active, fieldset[disabled] .btn-primary:active, .btn-primary.disabled.active, .btn-primary[disabled].active, fieldset[disabled] .btn-primary.active,
 .table > thead > tr > td.primary, .table > tbody > tr > td.primary, .table > tfoot > tr > td.primary, .table > thead > tr > th.primary, .table > tbody > tr > th.primary, .table > tfoot > tr > th.primary, .table > thead > tr.primary > td, .table > tbody > tr.primary > td, .table > tfoot > tr.primary > td, .table > thead > tr.primary > th, .table > tbody > tr.primary > th, .table > tfoot > tr.primary > th {
   background-color: #3498db;
   color: #f8f8f8;
   border-color: #3498db;
 }
-/*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
 .txt-primary {color: #6AA6D6;}
 .progress-bar-success .ui-widget-header, .bg-success, .btn-success, .btn-success.disabled, .btn-success[disabled], fieldset[disabled] .btn-success, .btn-success.disabled:hover, .btn-success[disabled]:hover, fieldset[disabled] .btn-success:hover, .btn-success.disabled:focus, .btn-success[disabled]:focus, fieldset[disabled] .btn-success:focus, .btn-success.disabled:active, .btn-success[disabled]:active, fieldset[disabled] .btn-success:active, .btn-success.disabled.active, .btn-success[disabled].active, fieldset[disabled] .btn-success.active, .progress-bar-success,
 .table > thead > tr > td.success, .table > tbody > tr > td.success, .table > tfoot > tr > td.success, .table > thead > tr > th.success, .table > tbody > tr > th.success, .table > tfoot > tr > th.success, .table > thead > tr.success > td, .table > tbody > tr.success > td, .table > tfoot > tr.success > td, .table > thead > tr.success > th, .table > tbody > tr.success > th, .table > tfoot > tr.success > th {
@@ -876,7 +874,6 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
   border-color: #ffeaa7;
 }
 .txt-groupTitle {color: #1289A7;}
-/*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
 .progress-bar-dark .ui-widget-header, .bg-dark, .btn-dark, .btn-dark.disabled, .btn-dark[disabled], fieldset[disabled] .btn-dark, .btn-dark.disabled:hover, .btn-dark[disabled]:hover, fieldset[disabled] .btn-dark:hover, .btn-dark.disabled:focus, .btn-dark[disabled]:focus, fieldset[disabled] .btn-dark:focus, .btn-dark.disabled:active, .btn-dark[disabled]:active, fieldset[disabled] .btn-dark:active, .btn-dark.disabled.active, .btn-dark[disabled].active, fieldset[disabled] .btn-dark.active, .progress-bar-dark,
 .table > thead > tr > td.dark, .table > tbody > tr > td.dark, .table > tfoot > tr > td.dark, .table > thead > tr > th.dark, .table > tbody > tr > th.dark, .table > tfoot > tr > th.dark, .table > thead > tr.dark > td, .table > tbody > tr.dark > td, .table > tfoot > tr.dark > td, .table > thead > tr.dark > th, .table > tbody > tr.dark > th, .table > tfoot > tr.dark > th {
   background-color: #2f4050;
@@ -895,7 +892,6 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
 .table > thead > tr > td.outline, .table > tbody > tr > td.outline, .table > tfoot > tr > td.outline, .table > thead > tr > th.outline, .table > tbody > tr > th.outline, .table > tfoot > tr > th.outline, .table > thead > tr.outline > td, .table > tbody > tr.outline > td, .table > tfoot > tr.outline > td, .table > thead > tr.outline > th, .table > tbody > tr.outline > th, .table > tfoot > tr.outline > th {
   background-color: white;
   color: #2c3e50;
-  border: none;
   border-top: 1px solid #2c3e50;
   border-bottom: 1px solid #2c3e50;
 }
@@ -904,7 +900,6 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
 .table > thead > tr > td.overline, .table > tbody > tr > td.overline, .table > tfoot > tr > td.overline, .table > thead > tr > th.overline, .table > tbody > tr > th.overline, .table > tfoot > tr > th.overline, .table > thead > tr.overline > td, .table > tbody > tr.overline > td, .table > tfoot > tr.overline > td, .table > thead > tr.overline > th, .table > tbody > tr.overline > th, .table > tfoot > tr.overline > th {
   background-color: white;
   color: #2c3e50;
-  border: none;
   border-top: 1px solid #2c3e50;
 }
 .txt-overline {border-top: 1px solid #2c3e50; color: #2c3e50;}
@@ -912,7 +907,6 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
 .table > thead > tr > td.line, .table > tbody > tr > td.line, .table > tfoot > tr > td.line, .table > thead > tr > th.line, .table > tbody > tr > th.line, .table > tfoot > tr > th.line, .table > thead > tr.line > td, .table > tbody > tr.line > td, .table > tfoot > tr.line > td, .table > thead > tr.line > th, .table > tbody > tr.line > th, .table > tfoot > tr.line > th {
   background-color: white;
   color: #2c3e50;
-  border: none;
   border-bottom: 1px solid #2c3e50 !important;
 }
 .txt-line {border-bottom: 1px solid #2c3e50; color: #2c3e50;}
@@ -920,7 +914,6 @@ ul.DTTT_dropdown.dropdown-menu > li:hover > a {
 .table > thead > tr > td.white, .table > tbody > tr > td.white, .table > tfoot > tr > td.white, .table > thead > tr > th.white, .table > tbody > tr > th.white, .table > tfoot > tr > th.white, .table > thead > tr.white > td, .table > tbody > tr.white > td, .table > tfoot > tr.white > td, .table > thead > tr.white > th, .table > tbody > tr.white > th, .table > tfoot > tr.white > th {
   background-color: white;
   color: #2c3e50;
-  border: none;
 }
 .txt-white {color: #2c3e50;}
 /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
@@ -2243,7 +2236,7 @@ div.error {display:none;}
   #sidebar-left.col-sm-2 {
     opacity: 1;
     width: 16.666666666666664%;
-    padding: 0 15px;
+    padding: 0 5px;
   }
   .sidebar-show #sidebar-left.col-sm-2 {
     opacity: 0;
@@ -2407,7 +2400,7 @@ div.error {display:none;}
 }
 
 /* All Button Navbar Fixed */
-.cst-btn-navbutton{
+/*.cst-btn-navbutton{
   position: fixed;
   top: 55px;
   right: 20px;
@@ -2421,7 +2414,7 @@ div.error {display:none;}
 .cst-btn-navbutton .btn{
   padding: 0px 10px;
   border: 2px solid #DBDBDB;
-}
+}*/
 
 
 /* Pop Up Delete Data */

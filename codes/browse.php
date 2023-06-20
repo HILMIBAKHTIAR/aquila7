@@ -2,6 +2,7 @@
 if ($browse_override != 1) {
     $browse["id"]               = "";
     $browse["caption"]          = "Browse";
+    $browse["state"]            = "";
     $browse["query"]            = "";
     $browse["query_limit"]      = "";
     $browse["query_order"]      = "";
@@ -24,11 +25,11 @@ if ($browse_override != 1) {
         foreach ($browse_include as $setting)
             include $setting;
 }
-$browse_id               = "browse_" . $browse["id"];
+$browse_id                  = "browse_" . $browse["id"];
 // $string_url           = "'pages/grid.php?id=" . $browse_id . "'+'&search='+" . $browse_id . "_par_search";
-$string_url              = "'pages/grid.php?id=" . $browse_id . "'";
-$string_url_parameter    = $string_url;
-$script_reload_parameter = "
+$string_url                 = "'pages/grid.php?id=" . $browse_id . "'";
+$string_url_parameter       = $string_url;
+$script_reload_parameter    = "
     var browse_search = $('#" . $browse_id . "_search').val();
     var browse_keyword = $('#" . $browse_id . "_keyword').val();
     if(mode == 'open'){
@@ -45,6 +46,12 @@ $script_reload_parameter = "
     " . $browse_id . "_par_search = $('#" . $browse_id . "_keyword').val();
     if(!" . $browse_id . "_par_search)
         " . $browse_id . "_par_search = 0;";
+
+// Multi Selecting
+$multiselect_url            = "'pages/multiselect.php?id=" . $browse_id . "'";
+$multiselect_url_parameter  = $multiselect_url;
+$script_multiselecting      = "";
+
 $session_parameter       = array();
 if (!empty($browse["param_input"])) {
     $string_message = get_message(714);
@@ -53,12 +60,22 @@ if (!empty($browse["param_input"])) {
         $param   = explode("|", $parameter);
         $param_0 = str_replace(".", "", $param[0]);
         $script_reload_parameter .= "\n\t\tvar " . $browse_id . "_par_" . $param_0 . " = $('#" . $param[1] . "').val();\n\t\tif(!" . $browse_id . "_par_" . $param_0 . ")\n\t\t{ ";
+        $script_multiselecting .= "\n\t\t\tvar " . $browse_id . "_par_" . $param_0 . " = $('#" . $param[1] . "').val();\n\t\t\tif(!" . $browse_id . "_par_" . $param_0 . ")\n\t\t\t{ ";
         if ($param[4] == "null")
+        {
             $script_reload_parameter .= "\n\t\t\t" . $browse_id . "_par_" . $param_0 . " = 'skip';";
-        else
+            $script_multiselecting .= "\n\t\t\t\t" . $browse_id . "_par_" . $param_0 . " = 'skip';";
+        }
+        else 
+        {
             $script_reload_parameter .= "\n\t\t\t$.alert({title: 'ALERT',content: '" . $string_message . "',icon: 'fa fa-warning',theme: 'modern',type: 'red'});";
+            $script_multiselecting .= "\n\t\t\t\t$.alert({title: 'ALERT',content: '" . $string_message . "',icon: 'fa fa-warning',theme: 'modern',type: 'red'});";
+        }
         $script_reload_parameter .= "\n\t\t} ";
+        $script_multiselecting .= "\n\t\t\t} ";
         $string_url_parameter .= "+'&" . $param_0 . "='+" . $browse_id . "_par_" . $param_0;
+        $multiselect_url_parameter .= "+'&" . $param_0 . "='+" . $browse_id . "_par_" . $param_0;
+        
         $session_parameter[$i] = $param[0] . "|";
         if (isset($param[2]) && !empty($param[2]))
             $session_parameter[$i] .= $param[2];
@@ -87,73 +104,6 @@ if (!empty($browse["selected_url"]))
     $script_selecting .= "$('#" . $browse_id . "_selected').html('<a href=\"" . $browse["selected_url"] . "'+nomor+'\" target=\"_blank\">'+" . $browse_id . "_selected+'</a>');";
 else
     $script_selecting .= "$('#" . $browse_id . "_selected').html(" . $browse_id . "_selected);";
-
-// Multi Selecting
-$multiselect_url       = "'pages/multiselect.php'";
-$multiselect_query     = trim(preg_replace('/\s\s+/', ' ',  $browse["query"]));
-$script_multiselecting = "  
-    var " . $browse_id . "_multi_nomor = '';
-    var " . $browse_id . "_multi_selected = '';
-    var " . $browse_id . "_multi_selected_url = '';
-    var length_ids = ids.length;
-    var currentPage = jQuery(" . $browse_id . "_element).getGridParam('page').toString();
-    var selected_row = jQuery(" . $browse_id . "_element).data(currentPage);
-    var multiselect_query = \"" . $multiselect_query . "\";
-    var multiselect_nomor = \"". $browse["multiselect_nomor"] . "\";
-    var selected_data = [];
-    var obj=$.dialog({
-      icon: 'fa fa-spinner fa-spin',
-      title: 'Please Wait..',
-      draggable: false,
-      animation: 'scale',
-      content: '<font style=\"font-size:14px\">Retreiving Data..</font>',
-      buttons: {
-        ok: {
-            isHidden: true,
-          }
-      },
-      onOpen: function () {
-            $.ajax({
-                url : " . $multiselect_url . ",
-                type: 'POST',
-                data: { multiselect_nomor: multiselect_nomor,
-                        multiselect_query: multiselect_query, 
-                        selected_row: selected_row 
-                    },
-                success: function(data) {
-                    obj.close();
-                    selected_data = JSON.parse(data);
-                    for(var c = 0; c < selected_data.length; c++)
-                    {
-                        var id = selected_data[c];
-                        if(c > 0)
-                        {
-                            " . $browse_id . "_multi_nomor += ',';
-                            " . $browse_id . "_multi_selected += ' | ';
-                            " . $browse_id . "_multi_selected_url += ' | ';
-                        }
-                        var nomor = selected_data[c]['nomor'];
-                        " . $browse_id . "_multi_nomor += nomor;";
-if (!empty($browse["selected_url"]))
-    $script_multiselecting .= "\n\t" . $browse_id . "_multi_selected_url += '<a href=\"" . $browse["selected_url"] . "'+nomor+'\" target=\"_blank\">'";
-$i = 0;
-foreach ($browse["items_selected"] as $selected) {
-    $sel = explode("|", $selected);
-    if (!isset($sel[2])) {
-        if ($i != 0)
-            $script_multiselecting .= "\n\t\t\t" . $browse_id . "_multi_selected += ' - ';\n\t\t\t" . $browse_id . "_multi_selected_url += ' - ';\n\t\t\t";
-        $script_multiselecting .= "\n\t\t" . $browse_id . "_multi_selected += selected_data[c]['" . $sel[0] . "'];\n\t\t" . $browse_id . "_multi_selected_url += selected_data[c]['" . $sel[0] . "'];\n\t\t";
-        $i++;
-    }
-}
-if (!empty($browse["selected_url"]))
-    $script_multiselecting .= "\n\t" . $browse_id . "_multi_selected_url += '</a>'";
-$script_multiselecting .= "\n}\n$('#" . $browse_id . "_hidden').val(" . $browse_id . "_multi_nomor);\n$('#" . $browse_id . "_search').val(" . $browse_id . "_multi_selected);\n";
-if (!empty($browse["selected_url"]))
-    $script_multiselecting .= "$('#" . $browse_id . "_selected').html(" . $browse_id . "_multi_selected_url);";
-else
-    $script_multiselecting .= "$('#" . $browse_id . "_selected').html(" . $browse_id . "_multi_selected);";
-$script_multiselecting .= "\n}\n});\n}\n});";
 $script_set_output          = "";
 $script_autocomplete_output = "";
 if (!empty($browse["param_output"])) {
@@ -180,6 +130,7 @@ if (!empty($browse["autocomplete_url"]))
     $browse_auto["file"] = "'" . $browse["autocomplete_url"] . "'";
 else {
     $browse_auto["file"]                                      = "''";
+    $_SESSION["acomplete_" . $browse["id"]]["state"]          = $browse["state"];
     $_SESSION["acomplete_" . $browse["id"]]["query"]          = $browse["query"];
     $_SESSION["acomplete_" . $browse["id"]]["query_limit"]    = $browse["query_limit"];
     $_SESSION["acomplete_" . $browse["id"]]["query_order"]    = $browse["query_order"];
@@ -212,6 +163,75 @@ if (!empty($browse["selected_url"]))
 else
     $html_selected = "selected.result";
 $browse_auto["select_function"] = "\nif(selected." . $browse["id"] . " !== undefined)\n{\n\t$('#" . $browse_id . "_hidden').val(selected." . $browse["id"] . ".nomor);\n\t$('#" . $browse_id . "_selected').html(" . $html_selected . ");\n\t" . $script_autocomplete_output . "\n\t" . $script_call_custom . "\n}";
+
+// Multi Selecting
+$multiselect_query     = trim(preg_replace('/\s\s+/', ' ',  $browse["query"]));
+$script_multiselecting .= "  
+            var " . $browse_id . "_multi_nomor = '';
+            var " . $browse_id . "_multi_selected = '';
+            var " . $browse_id . "_multi_selected_url = '';
+            var length_ids = ids.length;
+            var currentPage = jQuery(" . $browse_id . "_element).getGridParam('page').toString();
+            var selected_row = jQuery(" . $browse_id . "_element).getGridParam('selectedNomor').toString();
+            $('#" . $browse_id . "_hidden').val(jQuery(" . $browse_id . "_element).data(currentPage)); 
+            var multiselect_query = \"" . $multiselect_query . "\";
+            var multiselect_nomor = \"". $browse["multiselect_nomor"] . "\";
+            var selected_data = [];
+            var obj=$.dialog({
+              icon: 'fa fa-spinner fa-spin',
+              title: 'Please Wait..',
+              draggable: false,
+              animation: 'scale',
+              content: '<font style=\"font-size:14px\">Retreiving Data..</font>',
+              buttons: {
+                ok: {
+                    isHidden: true,
+                  }
+              },
+              onOpen: function () {
+                    $.ajax({
+                        url : " . $multiselect_url_parameter . ",
+                        type: 'POST',
+                        data: { multiselect_nomor: multiselect_nomor,
+                                multiselect_query: multiselect_query, 
+                                selected_row: selected_row 
+                            },
+                        success: function(data) {
+                            obj.close();
+                            selected_data = JSON.parse(data);
+                            for(var c = 0; c < selected_data.length; c++)
+                            {
+                                var id = selected_data[c];
+                                if(c > 0)
+                                {
+                                    " . $browse_id . "_multi_nomor += ',';
+                                    " . $browse_id . "_multi_selected += ' | ';
+                                    " . $browse_id . "_multi_selected_url += ' | ';
+                                }
+                                var nomor = selected_data[c]['nomor'];
+                                " . $browse_id . "_multi_nomor += nomor;";
+if (!empty($browse["selected_url"]))
+    $script_multiselecting .= "\n\t\t\t\t\t\t\t\t\t" . $browse_id . "_multi_selected_url += '<a href=\"" . $browse["selected_url"] . "'+nomor+'\" target=\"_blank\">'";
+$i = 0;
+foreach ($browse["items_selected"] as $selected) {
+    $sel = explode("|", $selected);
+    if (!isset($sel[2])) {
+        if ($i != 0)
+            $script_multiselecting .= "\n\t\t\t\t\t\t\t\t\t" . $browse_id . "_multi_selected += ' - ';\n\t\t\t\t\t\t" . $browse_id . "_multi_selected_url += ' - ';";
+        $script_multiselecting .= "\n\t\t\t\t\t\t\t\t\t" . $browse_id . "_multi_selected += selected_data[c]['" . $sel[0] . "'];\n\t\t\t\t\t\t\t\t\t" . $browse_id . "_multi_selected_url += selected_data[c]['" . $sel[0] . "'];";
+        $i++;
+    }
+}
+if (!empty($browse["selected_url"]))
+    $script_multiselecting .= "\n\t\t\t\t\t\t\t\t\t" . $browse_id . "_multi_selected_url += '</a>'";
+$script_multiselecting .= "\n\t\t\t\t\t\t\t\t}\n\t\t\t\t\t\t\t$('#" . $browse_id . "_hidden').val(" . $browse_id . "_multi_nomor);\n\t\t\t\t\t\t\t$('#" . $browse_id . "_search').val(" . $browse_id . "_multi_selected);";
+if (!empty($browse["selected_url"]))
+    $script_multiselecting .= "\n\t\t\t\t\t\t\t$('#" . $browse_id . "_selected').html(" . $browse_id . "_multi_selected_url);";
+else
+    $script_multiselecting .= "\n\t\t\t\t\t\t\t$('#" . $browse_id . "_selected').html(" . $browse_id . "_multi_selected);";
+$script_multiselecting .= "\n\n\t\t\t\t\t\t\t" . $script_call_custom;
+$script_multiselecting .= "\n\t\t\t\t\t\t}\n\t\t\t\t\t});\n\t\t\t\t}\n\t\t\t});";
+
 $acomplete_override             = 1;
 $acomplete                      = $browse_auto;
 include $config["webspira"] . "codes/autocomplete.php";
@@ -241,7 +261,6 @@ $browse_grid["pre_script"]        = "
         {
             var ids = jQuery(" . $browse_id . "_element).jqGrid('getGridParam','selarrrow');
             " . $script_multiselecting . "
-            " . $script_call_custom . "
             $.unblockUI({});
             $('#" . $browse_id . "_area').attr('class','hiding');
         }
@@ -274,6 +293,7 @@ foreach ($browse["items"] as $items) {
         $browse_grid["colmodel"][$i]["width"] = $item[4];
     $i++;
 }
+$browse_grid["option"]["selectedNomor"] = "''";
 $browse_grid["option"]["datatype"]      = "'local'";
 $browse_grid["option"]["gridview"]      = "true";
 $browse_grid["option"]["height"]        = $_SESSION["setting"]["browse_height"];
@@ -282,10 +302,8 @@ if ($browse["multiselect"] == 1){
     $browse_grid["option"]["multiselect"] = "true";
     $browse_grid["option"]["ondblClickRow"] = "null";
     $browse_grid["option"]["gridComplete"] = "function(id){   
-        var currentPage = $(this).getGridParam('page').toString();
-
         //retrieve any previously stored rows for this page and re-select them
-        var retrieveSelectedRows = $(this).data(currentPage);
+        var retrieveSelectedRows = $(this).getGridParam('selectedNomor');
         var saveSelectedRows = '0';
         
         if(typeof retrieveSelectedRows !== 'undefined'){
@@ -341,20 +359,14 @@ if ($browse["multiselect"] == 1){
                 }
             }  
         }
-        
-        //Store any selected rows 
-        for(var i = 1; i <= parseInt(totalPage); i++){
-            $(this).data(i.toString(), saveSelectedRows);
-        } 
+
+        $(this).setGridParam({selectedNomor: saveSelectedRows});
     }";
     // $browse_grid["option"]["onPaging"] = "function(id){  
     // }";
     $browse_grid["option"]["onSelectAll"] = "function(id){
-        
-        var currentPage = $(this).getGridParam('page').toString();
-
         //retrieve any previously stored rows for this page and re-select them
-        var retrieveSelectedRows = $(this).data(currentPage);
+        var retrieveSelectedRows = $(this).getGridParam('selectedNomor');
         var saveSelectedRows = '0';
         
         if(typeof retrieveSelectedRows !== 'undefined'){
@@ -393,16 +405,11 @@ if ($browse["multiselect"] == 1){
             }
         }
 
-        //Store any selected rows 
-        for(var i = 1; i <= parseInt(totalPage); i++){
-            $(this).data(i.toString(), saveSelectedRows);
-        }    
+        $(this).setGridParam({selectedNomor: saveSelectedRows});    
     }";
     $browse_grid["option"]["onSelectRow"] = "function(id){
-        var currentPage = $(this).getGridParam('page').toString();
-
         //retrieve any previously stored rows for this page
-        var retrieveSelectedRows = $(this).data(currentPage);
+        var retrieveSelectedRows = $(this).getGridParam('selectedNomor');
         var saveSelectedRows = '0';
         
         if(typeof retrieveSelectedRows !== 'undefined'){
@@ -438,10 +445,7 @@ if ($browse["multiselect"] == 1){
             }
         }
 
-        //Store any selected rows 
-        for(var i = 1; i <= parseInt(totalPage); i++){
-            $(this).data(i.toString(), saveSelectedRows);
-        }
+        $(this).setGridParam({selectedNomor: saveSelectedRows});
     }";
 }
 $browse_grid["option"]["rownumbers"]  = "true";
@@ -450,8 +454,8 @@ $browse_grid["option"]["rowList"]     = $_SESSION["setting"]["browse_rowlist"];
 $browse_grid["option"]["url"]         = $string_url;
 $browse_grid["option"]["viewrecords"] = "true";
 $browse_grid["option"]["width"]       = $_SESSION["setting"]["browse_width"];
-$browse_grid["option"]["autowidth"]   = "true";
-$browse_grid["option"]["shrinkToFit"] = "false";
+// $browse_grid["option"]["autowidth"]   = "true";
+// $browse_grid["option"]["shrinkToFit"] = "true";
 $browse_grid["column_autoaddrow"]     = 0;
 $browse_grid["filtertoolbar"]         = 0;
 $browse_grid["navgrid"]               = 0;
@@ -507,5 +511,5 @@ include $config["webspira"] . "codes/grid.php";
 array_push($_SESSION["g.browse_html"], $grid_html);
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

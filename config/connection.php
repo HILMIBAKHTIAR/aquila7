@@ -1,2 +1,2 @@
 <?php $con = mysqli_connect($mysql["server"],$mysql["username"],$mysql["password"])or die("Koneksi ke ".$mysql["server"]." gagal.");mysqli_select_db($con, $mysql["database"])or die("Database ".$mysql["database"]." tidak ditemukan."); ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

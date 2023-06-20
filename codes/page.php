@@ -1,2 +1,2 @@
 <?php if($page_override!=1){$page["total"]=0;$page["row"]=$_SESSION["setting"]["index_row"];$page["now"]=0;$page_html="";if(!empty($page_include))foreach($page_include as $setting)include $setting;}$count_page=$paging->countPage($page["total"],$page["row"]);$page_html="\n<!--<div class='box-content'>\n\t\t<div class='col-sm-6'>&nbsp;</div>-->\n\t\t<div class='col-sm-6 text-right'>\n\t\t\t<div id='' class='dataTables_paginate paging_bootstrap'>\n\t\t\t\t<ul class='pagination'>".$paging->navPagination($page["now"],$count_page)."</ul>\n\t\t\t</div>\n\t\t</div>\n<!--</div>-->"; ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

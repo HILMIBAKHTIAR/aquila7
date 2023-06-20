@@ -1,6 +1,7 @@
 <?php
 if ($table_override != 1) {
     $table["id"]     = "index";
+    $table["state"]  = $config["state"];
     $table["url"]    = $_SESSION["g.url"];
     $table["column"] = array();
     $table["data"]   = array();
@@ -52,7 +53,7 @@ foreach ($table["colHeader"] as $key => $colHeader) {
                                 if($i >= $startSpan && $i <= $endSpan){
                                     echo "<th></th>";
                                     $isBelowColspan = 1;
-                                    break 3;
+                                    break;
                                 }
 
                             }
@@ -98,9 +99,11 @@ if ($index_type == "report"){
     $query  = str_replace('start','0', $query);
     $query  = str_replace('limit','18446744073709551615', $query);
 }
-if(isset($index["query_from"]) AND !empty($index["query_from"])){
-    $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-    $result = $mysqli->query($query);
+if(isset($query) AND !empty($query)){
+    $config["state"]= $table["state"];
+    include "config/database.php";
+    $mysqli         = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+    $result         = $mysqli->query($query);
     if (!$result) {
         if ($_SESSION["setting"]["environment"] != "live")
             echo "<br />Error MySQLi Query: " . $mysqli->error;
@@ -115,16 +118,18 @@ if(isset($index["query_from"]) AND !empty($index["query_from"])){
             $index_table["data"][$i]["after"] = "";
             $index_table["data"][$i]["element"] = "";
             include $index["data"];
-            echo "<tr>";
             if (!empty($index_table["data"][$i]["element"])){
                 echo $index_table["data"][$i]["element"];
             }
             else{
                 if (!empty($index_table["data"][$i]["break"]))
                     echo $index_table["data"][$i]["break"];
+                echo "<tr>";
                 $column_numb = 0;
                 foreach ($table["column"] as $column) {
                     $align = "";
+                    if ($column["name"] == "action")
+                        $align = "align=\"" . "center" . "\"";
                     if (!empty($column["align"]))
                         $align = "align=\"" . $column["align"] . "\"";
                     $width = "";
@@ -135,11 +140,11 @@ if(isset($index["query_from"]) AND !empty($index["query_from"])){
                     echo "<td " . $align . " " . $width . " class='col_detail_numb_" . $column_numb . " col_detail_name_" . $column["name"] . " " . $column["class"] . "'>" . $index_table["data"][$i][$column["name"]] . "</td>";
                     $column_numb++;
                 }
+                echo "</tr>";
                 if (!empty($index_table["data"][$i]["after"]))
                     echo $index_table["data"][$i]["after"];
                 $no++;
             }
-            echo "</tr>";
         }
     }
 }
@@ -149,5 +154,5 @@ if ($index["footer"] == 1 && !empty($footer))
 echo "\n</table>";
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

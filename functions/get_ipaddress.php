@@ -1,2 +1,2 @@
 <?php if(!ini_get('date.timezone'))date_default_timezone_set('Asia/Jakarta');function get_ipaddress(){if(!empty($_SERVER["HTTP_CLIENT_IP"]))$ipaddress=$_SERVER["HTTP_CLIENT_IP"];elseif(!empty($_SERVER["HTTP_X_FORWARDED_FOR"]))$ipaddress=$_SERVER["HTTP_X_FORWARDED_FOR"];else $ipaddress=$_SERVER["REMOTE_ADDR"];return $ipaddress;} ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

@@ -6768,7 +6768,7 @@ $.jgrid.extend({
 			iCol = parseInt(iCol,10);
 			// select the row that can be used for other methods
 			$t.p.selrow = $t.rows[iRow].id;
-			if (!$t.p.knv) {$($t).jqGrid("GridNav");}
+			// if (!$t.p.knv) {$($t).jqGrid("GridNav");}
 			// check to see if we have already edited cell
 			if ($t.p.savedRow.length>0) {
 				// prevent second click on that field and enable selects
@@ -17484,6 +17484,7 @@ hs=function(w,t,c){return w.each(function(){var s=this._jqm;$(t).each(function()
 				ret = $.map(scell, function(n){
 					var rv;
 					$.each(oSelect, function(i,val){
+						val = $.jgrid.stripHtml( val );
 						if (val === n) {
 							rv = i;
 							return false;

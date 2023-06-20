@@ -61,3 +61,7 @@ table.tb_print tr.subtotal td
 	font-weight:bold;
 	text-align:right;
 }
+.hiding 
+{
+	display:none;
+}

@@ -1,2 +1,2 @@
 <?php function break_table_print($rowprintz,$breakdata,$colspan){for($i=0;$i<($breakdata-$rowprint);$i++){echo "\n\t\t<tr>\n\t\t\t<td class='cleantable' colspan='".$colspan."'>&nbsp;</td>\n\t\t</tr>";}} ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

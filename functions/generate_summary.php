@@ -163,6 +163,33 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
         }
         $i++;
     }
+    if (strstr($features, "subtotalakhir")) {
+        if (!empty($class))
+            $edit["field"][$i]["form_group_class"] = $class;
+        else
+            $edit["field"][$i]["form_group"] = 0;
+        $hide_class = "";
+        if (!strstr($features, "pembulatan"))
+            $hide_class = " hide ";
+        $edit["field"][$i]["label"]                  = "Subtotal Akhir";
+        $edit["field"][$i]["label_class"]            = $hide_class;
+        $edit["field"][$i]["input_col"]              = "col-sm-4 no-drop";
+        $edit["field"][$i]["input"]                  = "subtotal_akhir";
+        $edit["field"][$i]["input_div_class"]        = $hide_class;
+        $edit["field"][$i]["input_class"]            = $hide_class . $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["id"]       = "sum_subtotalakhir_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["readonly"] = "readonly";
+        if ($edit["mode"] == "add")
+            $edit["field"][$i]["input_value"] = "0";
+        if (!empty($fields["subtotalakhir"])) {
+            $edit["field"][$i] = array_replace($edit["field"][$i], $fields["subtotalakhir"]);
+            if (isset($fields["subtotalakhir"]["input_attr"]["readonly"]) && $fields["subtotalakhir"]["input_attr"]["readonly"] != "readonly")
+                unset($edit["field"][$i]["input_attr"]["readonly"]);
+            if (isset($fields["subtotalakhir"]["input_attr"]["disabled"]) && $fields["subtotalakhir"]["input_attr"]["disabled"] != "disabled")
+                unset($edit["field"][$i]["input_attr"]["disabled"]);
+        }
+        $i++;
+    }
     if (strstr($features, "um1")) {
         if (!empty($class))
             $edit["field"][$i]["form_group_class"] = $class;
@@ -173,6 +200,7 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
         $edit["field"][$i]["input"]            = "um";
         $edit["field"][$i]["input_class"]      = $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
         $edit["field"][$i]["input_attr"]["id"] = "sum_um1_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["readonly"] = "readonly";
         if ($edit["mode"] == "add")
             $edit["field"][$i]["input_value"] = "0";
         if (!empty($fields["um1"])) {
@@ -194,6 +222,7 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
         $edit["field"][$i]["input"]            = "um_2";
         $edit["field"][$i]["input_class"]      = $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
         $edit["field"][$i]["input_attr"]["id"] = "sum_um2_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["readonly"] = "readonly";
         if ($edit["mode"] == "add")
             $edit["field"][$i]["input_value"] = "0";
         if (!empty($fields["um2"])) {
@@ -215,6 +244,7 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
         $edit["field"][$i]["input"]            = "um_3";
         $edit["field"][$i]["input_class"]      = $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
         $edit["field"][$i]["input_attr"]["id"] = "sum_um3_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["readonly"] = "readonly";
         if ($edit["mode"] == "add")
             $edit["field"][$i]["input_value"] = "0";
         if (!empty($fields["um3"])) {
@@ -254,9 +284,11 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
         else
             $edit["field"][$i]["form_group"] = 0;
         $edit["field"][$i]["label"]                  = "DPP";
+        $edit["field"][$i]["label_class"]            = "ppn_section hide";
         $edit["field"][$i]["input_col"]              = "col-sm-4 no-drop";
         $edit["field"][$i]["input"]                  = "dpp";
-        $edit["field"][$i]["input_class"]            = $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
+        $edit["field"][$i]["input_div_class"]        = "ppn_section hide";
+        $edit["field"][$i]["input_class"]            = "ppn_section hide " . $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
         $edit["field"][$i]["input_attr"]["id"]       = "sum_dpp_" . $grid_id;
         $edit["field"][$i]["input_attr"]["readonly"] = "readonly";
         if ($edit["mode"] == "add")
@@ -276,9 +308,11 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
         else
             $edit["field"][$i]["form_group"] = 0;
         $edit["field"][$i]["label"]                   = "PPN";
+        $edit["field"][$i]["label_class"]             = "ppn_section hide";
         $edit["field"][$i]["input_col"]               = "col-sm-2 no-drop";
         $edit["field"][$i]["input"]                   = "ppn_prosentase";
-        $edit["field"][$i]["input_class"]             = $_SESSION["setting"]["class_percent"] . " summary_" . $grid_id;
+        $edit["field"][$i]["input_div_class"]         = "ppn_section hide";
+        $edit["field"][$i]["input_class"]             = "ppn_section hide " . $_SESSION["setting"]["class_percent"] . " summary_" . $grid_id;
         $edit["field"][$i]["input_attr"]["id"]        = "sum_ppn_" . $grid_id;
         $edit["field"][$i]["input_attr"]["maxlength"] = $_SESSION["setting"]["limit_percent"];
         $edit["field"][$i]["input_attr"]["readonly"]  = "readonly";
@@ -293,9 +327,11 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
         }
         $i++;
         $edit["field"][$i]["form_group"]             = 0;
+        $edit["field"][$i]["label_class"]            = "ppn_section hide";
         $edit["field"][$i]["input_col"]              = "col-sm-2 no-drop";
         $edit["field"][$i]["input"]                  = "ppn_nominal";
-        $edit["field"][$i]["input_class"]            = $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
+        $edit["field"][$i]["input_div_class"]        = "ppn_section hide";
+        $edit["field"][$i]["input_class"]            = "ppn_section hide " . $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
         $edit["field"][$i]["input_attr"]["id"]       = "sum_ppnnominal_" . $grid_id;
         $edit["field"][$i]["input_attr"]["readonly"] = "readonly";
         if ($edit["mode"] == "add")
@@ -305,6 +341,28 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
             if (isset($fields["ppn_nominal"]["input_attr"]["readonly"]) && $fields["ppn_nominal"]["input_attr"]["readonly"] != "readonly")
                 unset($edit["field"][$i]["input_attr"]["readonly"]);
             if (isset($fields["ppn_nominal"]["input_attr"]["disabled"]) && $fields["ppn_nominal"]["input_attr"]["disabled"] != "disabled")
+                unset($edit["field"][$i]["input_attr"]["disabled"]);
+        }
+        $i++;
+    }
+    if (strstr($features, "pembulatan")) {
+        if (!empty($class))
+            $edit["field"][$i]["form_group_class"] = $class;
+        else
+            $edit["field"][$i]["form_group"] = 0;
+        $edit["field"][$i]["label"]                  = "Pembulatan";
+        $edit["field"][$i]["input_col"]              = "col-sm-4 no-drop";
+        $edit["field"][$i]["input"]                  = "pembulatan";
+        $edit["field"][$i]["input_class"]            = $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["id"]       = "sum_pembulatan_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["onkeyup"]  = "calculate_summary(\"" . $grid_id . "\");";
+        if ($edit["mode"] == "add")
+            $edit["field"][$i]["input_value"] = "0";
+        if (!empty($fields["pembulatan"])) {
+            $edit["field"][$i] = array_replace($edit["field"][$i], $fields["pembulatan"]);
+            if (isset($fields["pembulatan"]["input_attr"]["readonly"]) && $fields["pembulatan"]["input_attr"]["readonly"] != "readonly")
+                unset($edit["field"][$i]["input_attr"]["readonly"]);
+            if (isset($fields["pembulatan"]["input_attr"]["disabled"]) && $fields["pembulatan"]["input_attr"]["disabled"] != "disabled")
                 unset($edit["field"][$i]["input_attr"]["disabled"]);
         }
         $i++;
@@ -331,9 +389,36 @@ function generate_summary($edit, $features = "subtotal", $grid_id, $class = "", 
         }
         $i++;
     }
+    if (strstr($features, "totalbayar")) {
+        if (!empty($class))
+            $edit["field"][$i]["form_group_class"] = $class;
+        else
+            $edit["field"][$i]["form_group"] = 0;
+        $hide_class = "";
+        if (!strstr($features, "um"))
+            $hide_class = " hide ";
+        $edit["field"][$i]["label"]                  = "Total Bayar";
+        $edit["field"][$i]["label_class"]            = $hide_class;
+        $edit["field"][$i]["input_col"]              = "col-sm-4 no-drop";
+        $edit["field"][$i]["input"]                  = "total_bayar";
+        $edit["field"][$i]["input_div_class"]        = $hide_class;
+        $edit["field"][$i]["input_class"]            = $hide_class . $_SESSION["setting"]["class_money"] . " summary_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["id"]       = "sum_totalbayar_" . $grid_id;
+        $edit["field"][$i]["input_attr"]["readonly"] = "readonly";
+        if ($edit["mode"] == "add")
+            $edit["field"][$i]["input_value"] = "0";
+        if (!empty($fields["totalbayar"])) {
+            $edit["field"][$i] = array_replace($edit["field"][$i], $fields["totalbayar"]);
+            if (isset($fields["totalbayar"]["input_attr"]["readonly"]) && $fields["totalbayar"]["input_attr"]["readonly"] != "readonly")
+                unset($edit["field"][$i]["input_attr"]["readonly"]);
+            if (isset($fields["totalbayar"]["input_attr"]["disabled"]) && $fields["totalbayar"]["input_attr"]["disabled"] != "disabled")
+                unset($edit["field"][$i]["input_attr"]["disabled"]);
+        }
+        $i++;
+    }
     return $edit;
 }
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-14_22:22;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-14_22:22;*/
 ?>

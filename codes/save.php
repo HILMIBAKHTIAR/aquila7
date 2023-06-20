@@ -1,48 +1,48 @@
 <?php
-
+date_default_timezone_set('Asia/Jakarta');
 if ($save_override != 1) {
-    $save["manual_save_afterstart"]   = "";
-    $save["manual_save_beforecommit"] = "";
-    $save["unique"]                   = array();
-    $save["mode"]                     = "add";
-    $save["table"]                    = "";
+    $save["manual_save_afterstart"]     = "";
+    $save["manual_save_beforecommit"]   = "";
+    $save["unique"]                     = array();
+    $save["mode"]                       = "add";
+    $save["state"]                      = $config["state"];
+    $save["table"]                      = "";
     if (!empty($_SESSION["menu_" . $_SESSION["g.menu"]]["table"]))
         $save["table"] = $_SESSION["menu_" . $_SESSION["g.menu"]]["table"];
-    $save["string_code"]         = "";
-    $save["field_code"]          = $_SESSION["setting"]["field_kode"];
-    /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-06-03;*/
-    if(!empty($_SESSION["setting"][$save["string_code"]]["label"])){
-        if($save["field_code"] != $_SESSION["setting"][$save["string_code"]]["label"]){
+    $save["string_code"]                = "";
+    $save["field_code"]                 = $_SESSION["setting"]["field_kode"];
+    if (!empty($_SESSION["setting"][$save["string_code"]]["label"]))
+        if($save["field_code"] != $_SESSION["setting"][$save["string_code"]]["label"])
             $save["field_code"] = $_SESSION["setting"][$save["string_code"]]["label"];
-        }
-    }
-    /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-03;*/
-    $save["field"]               = array();
-    $save["string_id"]           = "";
-    $save["detail"]              = array();
-    $save["sp_add"]              = "";
-    $save["sp_add_param"]        = array();
-    $save["sp_edit"]             = "";
-    $save["sp_edit_param"]       = array();
-    $save["sp_delete"]           = "";
-    $save["sp_delete_param"]     = array();
-    $save["sp_approve"]          = "";
-    $save["sp_approve_param"]    = array();
-    $save["sp_reject"]           = "";
-    $save["sp_reject_param"]     = array();
-    $save["sp_disapprove"]       = "";
-    $save["sp_disapprove_param"] = array();
-    $save["sp_close"]            = "";
-    $save["sp_close_param"]      = array();
-    $save["url"]                 = $_SESSION["g.url"];
-    $save["url_success_custom"]  = "";
-    $save["url_success"]         = $save["url"] . "&sm=edit&a=view&no=";
-    $save["url_failed"]          = $save["url"];
-    $save["debug"]               = 0;
+    $save["field"]                      = array();
+    $save["string_id"]                  = "";
+    $save["detail"]                     = array();
+    $save["sp_add"]                     = "";
+    $save["sp_add_param"]               = array();
+    $save["sp_edit"]                    = "";
+    $save["sp_edit_param"]              = array();
+    $save["sp_delete"]                  = "";
+    $save["sp_delete_param"]            = array();
+    $save["sp_approve"]                 = "";
+    $save["sp_approve_param"]           = array();
+    $save["sp_reject"]                  = "";
+    $save["sp_reject_param"]            = array();
+    $save["sp_disapprove"]              = "";
+    $save["sp_disapprove_param"]        = array();
+    $save["sp_close"]                   = "";
+    $save["sp_close_param"]             = array();
+    $save["url"]                        = $_SESSION["g.url"];
+    $save["url_success_custom"]         = "";
+    $save["url_success"]                = $save["url"] . "&sm=edit&a=view";
+    $save["url_failed"]                 = $save["url"];
+    $save["debug"]                      = 0;
     if (!empty($save_include))
         foreach ($save_include as $setting)
             include $setting;
 }
+$config["state"] = $save["state"];
+include "config/database.php";
+include $config["webspira"]."config/connection.php";
 $debug_html = "";
 if (!empty($save["unique"]) && ($save["mode"] == "add" || $save["mode"] == "edit" || $save["mode"] == "approve")) {
     $debug_html .= '$save[unique] = ' . $save["unique"] . ' && $save[mode] = ' . $save["mode"] . "<br /><br />";
@@ -80,14 +80,14 @@ if (!empty($save["unique"]) && ($save["mode"] == "add" || $save["mode"] == "edit
 }
 if ($save["mode"] == "add") {
     $debug_html .= '$save[mode] = ' . $save["mode"] . "<br /><br />";
-    $next_save_delay = 20;
+    $next_save_delay = 5;
     if (!empty($_SESSION["setting"]["next_save_delay"])) {
         $next_save_delay = $_SESSION["setting"]["next_save_delay"];
     }
     $query = "\n\tSELECT *\n\tFROM rhaktivitasadmin\n\tWHERE\n\t\tnomormhadmin = " . $_SESSION["login"]["nomor"] . " AND\n\t\tipaddress = '" . $_SESSION["login"]["ipaddress"] . "' AND\n\t\taksi_menu_kode = '" . $_SESSION["g.menu"] . "' AND\n\t\taksi_menu_judul = '" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "' AND\n\t\taksi_statement = 'insert success' AND\n\t\taksi_table = '" . $save["table"] . "' AND\n\t\tDATE_FORMAT(waktu,'%Y-%m-%d %H:%i') = DATE_FORMAT(NOW(),'%Y-%m-%d %H:%i') AND\n\t\t(DATE_FORMAT(NOW(),'%s') - DATE_FORMAT(waktu,'%s')) < " . $next_save_delay . "\n\t";
     $debug_html .= "mysqli_query : " . $query . "<br /><br />";
     $double_check = mysqli_num_rows(mysqli_query($con, $query));
-    $debug_html .= "mysqli_num_rows = " . $double_check . "<br /><br /><br /><br />";
+    $debug_html .= "mysqli_num_rows = " . $double_check . "<br /><br />";
     if ($double_check > 0) {
         $debug_html .= get_message(109);
         if ($save["debug"] == 1)
@@ -97,7 +97,9 @@ if ($save["mode"] == "add") {
     }
 }
 transactions($con, "start");
-$debug_html .= "transactions(start);<br /><br /><br /><br />";
+$debug_html .= "transactions(start);<br /><br />";
+$aksi_durasi_exists = check_column($con, 'rhaktivitasadmin', 'aksi_durasi');
+
 if (!empty($edit["manual_save_afterstart"]))
     include $edit["manual_save_afterstart"];
 if ($save["mode"] == "add") {
@@ -114,7 +116,8 @@ if ($save["mode"] == "add") {
     $i             = 0;
     foreach ($save["field"] as $field) {
         if ((empty($field["pro_mode"]) && empty($field["anti_mode"])) || (!empty($field["pro_mode"]) && strstr($field["pro_mode"], $save["mode"])) || (!empty($field["anti_mode"]) && !strstr($field["anti_mode"], $save["mode"]))) {
-            if (!empty($field["input"]) && $field["input_save"] != "skip" && (!empty($_POST[$field["input"]]) || $_POST[$field["input"]] == 0)) {
+            if (!empty($field["input"]) && $field["input_save"] != "skip") 
+            {
                 if ($i != 0) {
                     $insert_fields .= ",";
                     $insert_values .= ",";
@@ -124,20 +127,24 @@ if ($save["mode"] == "add") {
                     $number_type = search_number_type($field["input_class"]);
                 if (!empty($field["input_attr"]["class"]))
                     $number_type = search_number_type($field["input_attr"]["class"]);
-                if (!empty($_SESSION["setting"]["date_class_autoformat"]) && (search_date_class($field["input_class"]) || search_date_class($field["input_attr"]["class"]))) {
-                    $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["date"], $_POST[$field["input"]])->format("Y-m-d");
+                if(!empty($_POST[$field["input"]])) {
+                    if (!empty($_SESSION["setting"]["date_class_autoformat"]) 
+                        && (search_picker_class($field["input_class"], "date_class_autoformat") 
+                        || search_picker_class($field["input_attr"]["class"], "date_class_autoformat"))) 
+                        $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["date"], $_POST[$field["input"]])->format("Y-m-d");
+                    if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) 
+                        && (search_picker_class($field["input_class"], "datetime_class_autoformat") 
+                        || search_picker_class($field["input_attr"]["class"], "datetime_class_autoformat")))
+                        $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["datetime"], $_POST[$field["input"]])->format("Y-m-d H:i:s");
+                    if (!empty($_SESSION["setting"]["month_class_autoformat"]) 
+                        && (search_picker_class($field["input_class"], "month_class_autoformat") 
+                        || search_picker_class($field["input_attr"]["class"], "month_class_autoformat"))) 
+                        $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["month"], $_POST[$field["input"]])->format("Y-m-01");
+                    if (!empty($_SESSION["setting"]["year_class_autoformat"]) 
+                        && (search_picker_class($field["input_class"], "year_class_autoformat") 
+                        || search_picker_class($field["input_attr"]["class"], "year_class_autoformat")))
+                        $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["year"], $_POST[$field["input"]])->format("Y-01-01");
                 }
-                /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
-                if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) && (search_datetime_class($field["input_class"]) || search_datetime_class($field["input_attr"]["class"]))) {
-                    $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["datetime"], $_POST[$field["input"]])->format("Y-m-d H:i:s");
-                }
-                /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
-
-                /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-                if (!empty($_SESSION["setting"]["period_class_autoformat"]) && (search_period_class($field["input_class"]) || search_period_class($field["input_attr"]["class"]))) {
-                    $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["period"], $_POST[$field["input"]])->format("Y-m-01");
-                }
-                /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
                 if (!empty($number_type))
                     $value = number_recovering($_POST[$field["input"]]);
                 else
@@ -146,7 +153,7 @@ if ($save["mode"] == "add") {
                     $format_date = $field["input_attr"]["date_format"];
                     $value       = "STR_TO_DATE(" . $value . ",'" . $format_date . "')";
                 }
-                $insert_fields .= $field["input"];
+                $insert_fields .= "`".$field["input"]."`";
                 $insert_values .= $value;
                 $i++;
             }
@@ -158,6 +165,11 @@ if ($save["mode"] == "add") {
         $insert_values .= "," . $_POST[$_SESSION["setting"]["field_nomor"]];
         $nomor = $_POST[$_SESSION["setting"]["field_nomor"]];
     }
+    // if(check_column($con, $save["table"], 'url')) {   
+    //     $debug_html     .= "Column Url Exists -> Table " . $save["table"] . "<br /><br />";
+    //     $insert_fields  .= ",url";
+    //     $insert_values  .= ",'" . $_SESSION["g.url"] . "&sm=edit&a=view&no='";
+    // }
     $query = "\n\tINSERT INTO " . $save["table"] . "\n\t(" . $insert_fields . "," . $_SESSION["setting"]["field_dibuat_oleh"] . "," . $_SESSION["setting"]["field_dibuat_pada"] . ")\n\tVALUES\n\t(" . $insert_values . "," . $_SESSION["login"]["nomor"] . ",now())";
     $debug_html .= "mysqli_query : " . $query . "<br /><br />";
     $save_action = mysqli_query($con, $query);
@@ -166,6 +178,23 @@ if ($save["mode"] == "add") {
     if (empty($nomor)) {
         $nomor = mysqli_insert_id($con);
         $debug_html .= "mysqli_insert_id() = " . $nomor . "<br /><br />";
+
+        if(check_column($con, $save["table"], 'url')) {   
+            $debug_html     .= "Column Url Exists -> Table " . $save["table"] . "<br /><br />";
+            $url_values     = $_SESSION["g.url"] . "&sm=edit&a=view&no=". $nomor;
+            
+            $query = "\n\t\tUPDATE " . $save["table"] . "\n\t\tSET url = '" . $url_values . "'\n\t\tWHERE " . $_SESSION["setting"]["field_nomor"] . " = " . $nomor;
+            $debug_html .= "mysql_query : " . $query . "<br /><br />";
+            $update_url = mysqli_query($con, $query);
+            if (!$update_url) {
+                $debug_html .= "mysqli_query ERROR : " . mysqli_error($con) . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
+                if ($save["debug"] == 1)
+                    $_SESSION["g.debug_html"] .= $debug_html;
+                $_SESSION["g.debug0_html"] .= $debug_html;
+                transactions($con, "rollback");
+                set_alert(get_message(703, ucfirst($save["mode"])), "danger");
+            }
+        }
     }
     $statement = "insert";
     foreach ($save["detail"] as $detail) {
@@ -183,38 +212,40 @@ if ($save["mode"] == "add") {
                 $insert_values = "";
                 $j             = 0;
                 foreach ($detail["field_name"] as $field_name) {
-                    if (!empty($_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name]) || $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name] == 0) {
+                    // if (!empty($_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name])) {
                         if ($j != 0) {
                             $insert_fields .= ",";
                             $insert_values .= ",";
                         }
                         $data_format = explode("|", $field_name);
-                        if (sizeof($data_format) == 3 && $data_format[1] == "date") {
-                            /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-                            if(!empty($_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])){
-                                if (!empty($_SESSION["setting"]["date_class_autoformat"]) && search_date_class($data_format[2], "coltemplate_date_class_autoformat")) {
-                                $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_date"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d");
-                                }
-                                if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) && search_datetime_class($data_format[2], "coltemplate_datetime_class_autoformat")) {
+                        if (sizeof($data_format) > 1) {
+                            if(!empty($_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])) {
+                                if (!empty($_SESSION["setting"]["coltemplate_date_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_date_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_date"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d");
+                                if (!empty($_SESSION["setting"]["coltemplate_datetime_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_datetime_class_autoformat"))
                                     $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_datetime"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d H:i:s");
-                                }
-                                if (!empty($_SESSION["setting"]["period_class_autoformat"]) && search_period_class($data_format[2], "coltemplate_period_class_autoformat")) {
-                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_period"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-01");
-                                }
+                                if (!empty($_SESSION["setting"]["coltemplate_month_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_month_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_month"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-01");
+                                if (!empty($_SESSION["setting"]["coltemplate_year_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_year_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_year"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-01-01");
                             }
-                            else{
+                            else {
                                 $data_value = $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]]; 
                             }
-                            /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-                            $insert_fields .= $data_format[0];
+                            $insert_fields .= "`".$data_format[0]."`";
                             $insert_values .= "'" . addslashes(str_replace("\t", " ", $data_value)) . "'";
-                        } else {
-                            $insert_fields .= $field_name;
+                        } 
+                        else {
+                            $insert_fields .= "`".$field_name."`";
                             $data_value = $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name];
                             $insert_values .= "'" . addslashes(str_replace("\t", " ", $data_value)) . "'";
                         }
                         $j++;
-                    }
+                    // }
                 }
                 if (!empty($detail["foreign_key"])) {
                     $debug_html .= '$detail[foreign_key] = ' . $detail["foreign_key"] . "<br /><br />";
@@ -242,43 +273,46 @@ if ($save["mode"] == "add") {
     }
 
     transactions($con, "commit");
-    $debug_html .= "<br />transactions(commit);<br />";
+    $debug_html .= "transactions(commit);<br /><br />";
     transactions($con, "start");
-    $debug_html .= "<br />transactions(start);<br />";
+    $debug_html .= "transactions(start);<br /><br />";
 
     if (!empty($save["string_code"])) {
-        $debug_html .= '$save[string_code] = ' . $save["string_code"] . "<br /><br />";
+        $debug_html     .= '$save[string_code] = ' . $save["string_code"] . "<br /><br />";
+        $_SESSION["g.debug0_html"] .= $debug_html;
+        $cabang = [];
+        $pt     = [];
+        if (!empty($_POST["nomormhcabang"])) {
+            $query = "\n\t\tSELECT a.* FROM mhcabang a \n\t\tWHERE a." . $_SESSION["setting"]["field_nomor"] . " = " . $_POST["nomormhcabang"] . "\n\t\t LIMIT 1";
+            $debug_html .= "mysqli_query : " . $query . "<br /><br />";
+            $cabang = mysqli_fetch_assoc(mysqli_query($con, $query));
+            $debug_html .= '$cabang[kode] = ' . $cabang["kode"] . "<br /><br />";
+        }
+        if (!empty($_POST["nomormhusaha"])) {
+            $query = "\n\t\tSELECT a.* FROM mhusaha a \n\t\tWHERE a." . $_SESSION["setting"]["field_nomor"] . " = " . $_POST["nomormhusaha"] . "\n\t\t LIMIT 1";
+            $debug_html .= "mysqli_query : " . $query . "<br /><br />";
+            $pt = mysqli_fetch_assoc(mysqli_query($con, $query));
+            $debug_html .= '$pt[kode] = ' . $pt["kode"] . "<br /><br />";
+        }
         if (!empty($_POST[$_SESSION["setting"]["field_tanggal"]])) {
             if (!empty($save["string_code_plus"]))
-                $finalcode = formatting_code($con, $save["string_code"], $_POST[$_SESSION["setting"]["field_tanggal"]], $save["string_code_plus"]);
+                $finalcode = formatting_code($con, $save["string_code"], $_POST[$_SESSION["setting"]["field_tanggal"]], $save["string_code_plus"], $cabang, $pt);
             else
-                $finalcode = formatting_code($con, $save["string_code"], $_POST[$_SESSION["setting"]["field_tanggal"]]);
+                $finalcode = formatting_code($con, $save["string_code"], $_POST[$_SESSION["setting"]["field_tanggal"]], [], $cabang, $pt);
         } else {
             if (!empty($save["string_code_plus"]))
-                $finalcode = formatting_code($con, $save["string_code"], "", $save["string_code_plus"]);
+                $finalcode = formatting_code($con, $save["string_code"], "", $save["string_code_plus"], $cabang, $pt);
             else
-                $finalcode = formatting_code($con, $save["string_code"]);
-        }
-        $duplicatecode = mysqli_num_rows(mysqli_query($con, "SELECT a." . $save["field_code"] . " FROM " . $save["table"] . " a WHERE a." . $_SESSION["setting"]["field_nomor"] . " <> 0 AND a." . $save["field_code"] . " LIKE '" . $finalcode . "%' FOR UPDATE"));
-        while ($duplicatecode > 0) {
-            $debug_html .= "Loop Generate Code <br /> <br />";
-            $_SESSION["g.debug0_html"] .= $debug_html;
-            $finalcode     = formatting_code($save["string_code"]);
-            $duplicatecode = mysqli_num_rows(mysqli_query($con, "SELECT a." . $save["field_code"] . " FROM " . $save["table"] . " a WHERE a." . $_SESSION["setting"]["field_nomor"] . " <> 0 AND a." . $save["field_code"] . " LIKE '" . $finalcode . "%' FOR UPDATE"));
+                $finalcode = formatting_code($con, $save["string_code"], "", [], $cabang, $pt);
         }
         $query = "\n\t\tUPDATE " . $save["table"] . "\n\t\tSET " . $save["field_code"] . " = '" . $finalcode . "'\n\t\tWHERE " . $_SESSION["setting"]["field_nomor"] . " = " . $nomor;
         $debug_html .= "mysqli_query : " . $query . "<br /><br />";
         $update_finalcode = mysqli_query($con, $query);
-        if (!$update_finalcode){
-            $debug_html .= "mysqli_query failed : " . mysqli_error($con) . "<br />transactions(rollback);<br />" . get_message(703, ucfirst($save["mode"]));
-            if ($save["debug"] == 1)
-                $_SESSION["g.debug_html"] .= $debug_html;
-            $finalcode = formatting_code($con, $save["string_code"]);
-            $query = "\n\t\tUPDATE " . $save["table"] . "\n\t\tSET " . $save["field_code"] . " = '" . $finalcode . "'\n\t\tWHERE " . $_SESSION["setting"]["field_nomor"] . " = " . $nomor;
-            $debug_html .= "mysqli_query : " . $query . "<br /><br />";
-            $update_finalcode = mysqli_query($con, $query);
-        }
+        if ($save["debug"] == 1)
+            $_SESSION["g.debug_html"] .= $debug_html;
+        $_SESSION["g.debug0_html"] .= $debug_html;
     }
+
     if (!empty($save["sp_add"]) && !empty($save["sp_add_param"])) {
         $debug_html .= '$save[sp_add] = ' . $save["sp_add"] . ' && $save[sp_add_param] = ' . $save["sp_add_param"] . "<br />" . "transactions(commit);<br /><br />";
         transactions($con, "commit");
@@ -294,13 +328,23 @@ if ($save["mode"] == "add") {
             $parameters .= $value;
             $i++;
         }
-        $query = "CALL " . $save["sp_add"] . "(" . $nomor . "," . $parameters . ")";
-        $debug_html .= '$mysqli->query > ' . $query . "<br /><br />";
-        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-        $result = $mysqli->query($query);
+        $aksi_start         = date('Y-m-d H:i:s');
+        $query              = "CALL " . $save["sp_add"] . "(" . $nomor . "," . $parameters . ")";
+        $debug_html         .= '$mysqli->query > ' . $query . "<br /><br />";
+        $mysqli             = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $result             = $mysqli->query($query);
         if (!$result) {
             if ($_SESSION["setting"]["environment"] != "live")
                 echo "<br />" . $query . "<br />Error MySQLi Query: " . $mysqli->error;
+        }
+        $aksi_end           = date('Y-m-d H:i:s');
+        $aksi_durasi        = strtotime($aksi_end) - strtotime($aksi_start);
+        $aksi_durasi_column = '';
+        $aksi_durasi_value  = '';
+        if ($aksi_durasi_exists) {
+            $debug_html .= "Column Aksi Durasi Exists -> Table rhaktivitasadmin <br /><br />";
+            $aksi_durasi_column = ",\n\t\t\t\t\taksi_durasi";
+            $aksi_durasi_value  = ",\n\t\t\t\t\t'" . $aksi_durasi . "'";
         }
         while ($data = $result->fetch_assoc()) {
             $debug_html .= '$data[' . $_SESSION["setting"]["field_flag"] . '] = ' . $data[$_SESSION["setting"]["field_flag"]] . "<br /><br />";
@@ -309,10 +353,10 @@ if ($save["mode"] == "add") {
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
-                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor,\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_add failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "',\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
+                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_add failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
                 set_alert(get_message(703, ucfirst($save["mode"])) . "<br />" . $data[$_SESSION["setting"]["field_message"]], "danger", "", $save["url_success"] . "&no=" . $_GET["no"]);
             }
-            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor,\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_add success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "',\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
+            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_add success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
         }
         $save_action = TRUE;
     }
@@ -326,7 +370,7 @@ if ($save["mode"] == "add") {
     $i            = 0;
     foreach ($save["field"] as $field) {
         if ((empty($field["pro_mode"]) && empty($field["anti_mode"])) || (!empty($field["pro_mode"]) && strstr($field["pro_mode"], $save["mode"])) || (!empty($field["anti_mode"]) && !strstr($field["anti_mode"], $save["mode"]))) {
-            if (!empty($field["input"]) && $field["input_save"] != "skip" && (!empty($_POST[$field["input"]]) || $_POST[$field["input"]] == 0)) {
+            if (!empty($field["input"]) && $field["input_save"] != "skip") {
                 if ($i != 0)
                     $update_query .= ",";
                 $number_type = "";
@@ -334,21 +378,25 @@ if ($save["mode"] == "add") {
                     $number_type = search_number_type($field["input_class"]);
                 if (!empty($field["input_attr"]["class"]))
                     $number_type = search_number_type($field["input_attr"]["class"]);
-                if (!empty($_SESSION["setting"]["date_class_autoformat"]) && (search_date_class($field["input_class"]) || search_date_class($field["input_attr"]["class"]))) {
-                    $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["date"], $_POST[$field["input"]])->format("Y-m-d");
+                if(!empty($_POST[$field["input"]])) {
+                    if (!empty($_SESSION["setting"]["date_class_autoformat"]) 
+                        && (search_picker_class($field["input_class"], "date_class_autoformat") 
+                        || search_picker_class($field["input_attr"]["class"], "date_class_autoformat"))) 
+                        $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["date"], $_POST[$field["input"]])->format("Y-m-d");
+                    if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) 
+                        && (search_picker_class($field["input_class"], "datetime_class_autoformat") 
+                        || search_picker_class($field["input_attr"]["class"], "datetime_class_autoformat")))
+                        $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["datetime"], $_POST[$field["input"]])->format("Y-m-d H:i:s");
+                    if (!empty($_SESSION["setting"]["month_class_autoformat"]) 
+                        && (search_picker_class($field["input_class"], "month_class_autoformat") 
+                        || search_picker_class($field["input_attr"]["class"], "month_class_autoformat"))) 
+                        $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["month"], $_POST[$field["input"]])->format("Y-m-01");
+                    if (!empty($_SESSION["setting"]["year_class_autoformat"]) 
+                        && (search_picker_class($field["input_class"], "year_class_autoformat") 
+                        || search_picker_class($field["input_attr"]["class"], "year_class_autoformat")))
+                        $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["year"], $_POST[$field["input"]])->format("Y-01-01");
+                    $value = "'" . addslashes(str_replace("\t", " ", $_POST[$field["input"]])) . "'";
                 }
-                /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
-                if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) && (search_datetime_class($field["input_class"]) || search_datetime_class($field["input_attr"]["class"]))) {
-                    $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["datetime"], $_POST[$field["input"]])->format("Y-m-d H:i:s");
-                }
-                /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/
-
-                /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-                if (!empty($_SESSION["setting"]["period_class_autoformat"]) && (search_period_class($field["input_class"]) || search_period_class($field["input_attr"]["class"]))) {
-                    $_POST[$field["input"]] = DateTime::createFromFormat($_SESSION["setting"]["period"], $_POST[$field["input"]])->format("Y-m-01");
-                }
-                /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-
                 if (!empty($number_type))
                     $value = number_recovering($_POST[$field["input"]]);
                 else
@@ -357,12 +405,14 @@ if ($save["mode"] == "add") {
                     $format_date = $field["input_attr"]["date_format"];
                     $value       = "STR_TO_DATE(" . $value . ",'" . $format_date . "')";
                 }
-                $update_query .= $field["input"] . " = " . $value;
+                $update_query .= "`".$field["input"]."`" . " = " . $value;
                 $i++;
             }
         }
     }
-    $query = "\n\tUPDATE " . $save["table"] . "\n\tSET " . $update_query . ",\n\t" . $_SESSION["setting"]["field_diubah_oleh"] . " = " . $_SESSION["login"]["nomor"] . ",\n\t" . $_SESSION["setting"]["field_diubah_pada"] . " = now()\n\tWHERE " . $_SESSION["setting"]["field_nomor"] . " = " . $_GET["no"];
+    if(!empty($update_query))
+        $update_query .= ", ";
+    $query = "\n\tUPDATE " . $save["table"] . "\n\tSET " . $update_query . "\n\t" . $_SESSION["setting"]["field_diubah_oleh"] . " = " . $_SESSION["login"]["nomor"] . ",\n\t" . $_SESSION["setting"]["field_diubah_pada"] . " = now()\n\tWHERE " . $_SESSION["setting"]["field_nomor"] . " = " . $_GET["no"];
     $debug_html .= "mysqli_query : " . $query . "<br /><br />";
     $save_action = mysqli_query($con, $query);
     if (!$save_action)
@@ -412,25 +462,29 @@ if ($save["mode"] == "add") {
                             $query .= ",";
                         $data_format = explode("|", $field_name);
                         /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-                        if (sizeof($data_format) == 3 && $data_format[1] == 'date') {
-                            if(!empty($_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])){
-                                if (!empty($_SESSION["setting"]["date_class_autoformat"]) && search_date_class($data_format[2], "coltemplate_date_class_autoformat")) {
+                        if (sizeof($data_format) > 1) {
+                            if(!empty($_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])) {
+                                if (!empty($_SESSION["setting"]["coltemplate_date_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_date_class_autoformat"))
                                     $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_date"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d");
-                                }
-                                if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) && search_datetime_class($data_format[2], "coltemplate_datetime_class_autoformat")) {
+                                if (!empty($_SESSION["setting"]["coltemplate_datetime_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_datetime_class_autoformat"))
                                     $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_datetime"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d H:i:s");
-                                }
-                                if (!empty($_SESSION["setting"]["period_class_autoformat"]) && search_period_class($data_format[2], "coltemplate_period_class_autoformat")) {
-                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_period"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-01");
-                                }
+                                if (!empty($_SESSION["setting"]["coltemplate_month_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_month_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_month"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-01");
+                                if (!empty($_SESSION["setting"]["coltemplate_year_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_year_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_year"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-01-01");
                             }
-                            else{
+                            else {
                                 $data_value = $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]];
                             }
                             /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-                            $query .= $data_format[0] . " = '" . addslashes(str_replace("\t", " ", $data_value)) . "'";
-                        } else {
-                            $query .= $field_name . " = '" . addslashes(str_replace("\t", " ", $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name])) . "'";
+                            $query .= "`".$data_format[0]."`" . " = '" . addslashes(str_replace("\t", " ", $data_value)) . "'";
+                        } 
+                        else {
+                            $query .= "`".$field_name."`" . " = '" . addslashes(str_replace("\t", " ", $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name])) . "'";
                         }
                         $j++;
                     }
@@ -459,27 +513,31 @@ if ($save["mode"] == "add") {
                                 $insert_fields .= ",";
                             $insert_values .= ",";
                         }
-                        if ($h == 0){
-                            if (sizeof($data_format) == 3 && $data_format[1] == 'date') 
-                                $insert_fields .= $data_format[0];
-                            else
-                                $insert_fields .= $field_name;
-                        }
-                        if (sizeof($data_format) == 3 && $data_format[1] == 'date') {
-                            /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
-                            if (!empty($_SESSION["setting"]["date_class_autoformat"]) && search_date_class($data_format[2], "coltemplate_date_class_autoformat")) {
-                                $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_date"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d");
+                        if (sizeof($data_format) > 1) {
+                            if(!empty($_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])) {
+                                if (!empty($_SESSION["setting"]["coltemplate_date_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_date_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_date"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d");
+                                if (!empty($_SESSION["setting"]["coltemplate_datetime_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_datetime_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_datetime"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d H:i:s");
+                                if (!empty($_SESSION["setting"]["coltemplate_month_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_month_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_month"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-01");
+                                if (!empty($_SESSION["setting"]["coltemplate_year_class_autoformat"]) 
+                                    && search_picker_class($data_format[1], "coltemplate_year_class_autoformat"))
+                                    $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_year"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-01-01");
+                            } 
+                            else {
+                                $data_value = $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]];
                             }
-                            if (!empty($_SESSION["setting"]["datetime_class_autoformat"]) && search_datetime_class($data_format[2], "coltemplate_datetime_class_autoformat")) {
-                                $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_datetime"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-d H:i:s");
-                            }
-                            if (!empty($_SESSION["setting"]["period_class_autoformat"]) && search_period_class($data_format[2], "coltemplate_period_class_autoformat")) {
-                                $data_value = DateTime::createFromFormat($_SESSION["setting"]["coltemplate_period"], $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $data_format[0]])->format("Y-m-01");
-                            }
-                            /*END edited_by:glennferio@inspiraworld.com;last_updated:2020-06-01;*/
+                            if($h == 0)
+                                $insert_fields .= "`".$data_format[0]."`";
                             $insert_values .= "'" . addslashes(str_replace("\t", " ", $data_value)) . "'";   
-                        }
-                        else{
+                        } 
+                        else {
+                            if($h == 0)
+                                $insert_fields .= "`".$field_name."`";
                             $insert_values .= "'" . addslashes(str_replace("\t", " ", $_POST[$detail["grid_id"] . "_detail_" . $i . "_" . $field_name])) . "'";
                         }
                         $j++;
@@ -564,13 +622,23 @@ if ($save["mode"] == "add") {
             $parameters .= $value;
             $i++;
         }
-        $query = "CALL " . $save["sp_edit"] . "(" . $nomor . "," . $parameters . ")";
-        $debug_html .= '$mysqli->query > ' . $query . "<br /><br />";
-        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-        $result = $mysqli->query($query);
+        $aksi_start         = date('Y-m-d H:i:s');
+        $query              = "CALL " . $save["sp_edit"] . "(" . $nomor . "," . $parameters . ")";
+        $debug_html         .= '$mysqli->query > ' . $query . "<br /><br />";
+        $mysqli             = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $result             = $mysqli->query($query);
         if (!$result) {
             if ($_SESSION["setting"]["environment"] != "live")
                 echo "<br />" . $query . "<br />Error MySQLi Query: " . $mysqli->error;
+        }
+        $aksi_end           = date('Y-m-d H:i:s');
+        $aksi_durasi        = strtotime($aksi_end) - strtotime($aksi_start);
+        $aksi_durasi_column = '';
+        $aksi_durasi_value  = '';
+        if ($aksi_durasi_exists) {
+            $debug_html .= "Column Aksi Durasi Exists -> Table rhaktivitasadmin <br /><br />";
+            $aksi_durasi_column = ",\n\t\t\t\t\taksi_durasi";
+            $aksi_durasi_value  = ",\n\t\t\t\t\t'" . $aksi_durasi . "'";
         }
         while ($data = $result->fetch_assoc()) {
             $debug_html .= '$data[' . $_SESSION["setting"]["field_flag"] . '] = ' . $data[$_SESSION["setting"]["field_flag"]] . "<br /><br />";
@@ -579,10 +647,10 @@ if ($save["mode"] == "add") {
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
-                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor,\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_edit failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "',\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
+                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_edit failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
                 set_alert(get_message(703, ucfirst($save["mode"])) . "<br />" . $data[$_SESSION["setting"]["field_message"]], "danger", "", $save["url_success"] . "&no=" . $_GET["no"]);
             }
-            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor,\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_edit success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "',\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
+            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_edit success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
         }
         $save_action = TRUE;
     }
@@ -612,13 +680,23 @@ if ($save["mode"] == "add") {
             $parameters .= $value;
             $i++;
         }
-        $query = "CALL " . $save["sp_delete"] . "(" . $nomor . "," . $parameters . ")";
-        $debug_html .= '$mysqli->query > ' . $query . "<br /><br />";
-        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-        $result = $mysqli->query($query);
+        $aksi_start         = date('Y-m-d H:i:s');
+        $query              = "CALL " . $save["sp_delete"] . "(" . $nomor . "," . $parameters . ")";
+        $debug_html         .= '$mysqli->query > ' . $query . "<br /><br />";
+        $mysqli             = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $result             = $mysqli->query($query);
         if (!$result) {
             if ($_SESSION["setting"]["environment"] != "live")
                 echo "<br />" . $query . "<br />Error MySQLi Query: " . $mysqli->error;
+        }
+        $aksi_end           = date('Y-m-d H:i:s');
+        $aksi_durasi        = strtotime($aksi_end) - strtotime($aksi_start);
+        $aksi_durasi_column = '';
+        $aksi_durasi_value  = '';
+        if ($aksi_durasi_exists) {
+            $debug_html .= "Column Aksi Durasi Exists -> Table rhaktivitasadmin <br /><br />";
+            $aksi_durasi_column = ",\n\t\t\t\t\taksi_durasi";
+            $aksi_durasi_value  = ",\n\t\t\t\t\t'" . $aksi_durasi . "'";
         }
         while ($data = $result->fetch_assoc()) {
             $debug_html .= '$data[' . $_SESSION["setting"]["field_flag"] . '] = ' . $data[$_SESSION["setting"]["field_flag"]] . "<br /><br />";
@@ -627,10 +705,10 @@ if ($save["mode"] == "add") {
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
-                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor,\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_delete failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "',\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
+                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_delete failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
                 set_alert(get_message(703, ucfirst($save["mode"])) . "<br />" . $data[$_SESSION["setting"]["field_message"]], "danger", "", $save["url_success"] . "&no=" . $_GET["no"]);
             }
-            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor,\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_delete success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "',\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
+            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_delete success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
         }
         $save_action = TRUE;
         $nomor       = $data[$_SESSION["setting"]["field_nomor"]];
@@ -653,13 +731,23 @@ if ($save["mode"] == "add") {
             $parameters .= $value;
             $i++;
         }
-        $query = "CALL " . $save["sp_approve"] . "(" . $parameters . ")";
-        $debug_html .= '$mysqli->query > ' . $query . "<br /><br />";
-        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-        $result = $mysqli->query($query);
+        $aksi_start         = date('Y-m-d H:i:s');
+        $query              = "CALL " . $save["sp_approve"] . "(" . $parameters . ")";
+        $debug_html         .= '$mysqli->query > ' . $query . "<br /><br />";
+        $mysqli             = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $result             = $mysqli->query($query);
         if (!$result) {
             if ($_SESSION["setting"]["environment"] != "live")
                 echo "<br />" . $query . "<br />Error MySQLi Query: " . $mysqli->error;
+        }
+        $aksi_end           = date('Y-m-d H:i:s');
+        $aksi_durasi        = strtotime($aksi_end) - strtotime($aksi_start);
+        $aksi_durasi_column = '';
+        $aksi_durasi_value  = '';
+        if ($aksi_durasi_exists) {
+            $debug_html .= "Column Aksi Durasi Exists -> Table rhaktivitasadmin <br /><br />";
+            $aksi_durasi_column = ",\n\t\t\t\t\taksi_durasi";
+            $aksi_durasi_value  = ",\n\t\t\t\t\t'" . $aksi_durasi . "'";
         }
         while ($data = $result->fetch_assoc()) {
             $debug_html .= '$data[' . $_SESSION["setting"]["field_flag"] . '] = ' . $data[$_SESSION["setting"]["field_flag"]] . "<br /><br />";
@@ -668,10 +756,10 @@ if ($save["mode"] == "add") {
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
-                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor,\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_approve failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "',\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
+                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_approve failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
                 set_alert(get_message(703, ucfirst($save["mode"])) . "<br />" . $data[$_SESSION["setting"]["field_message"]], "danger", "", $save["url_success"] . "&no=" . $_GET["no"]);
             }
-            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor,\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_approve success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "',\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
+            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_approve success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
         }
         $save_action = TRUE;
         $nomor       = $_GET["no"];
@@ -702,13 +790,23 @@ if ($save["mode"] == "add") {
             $parameters .= $value;
             $i++;
         }
-        $query = "CALL " . $save["sp_reject"] . "(" . $parameters . ")";
-        $debug_html .= '$mysqli->query > ' . $query . "<br /><br />";
-        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-        $result = $mysqli->query($query);
+        $aksi_start         = date('Y-m-d H:i:s');
+        $query              = "CALL " . $save["sp_reject"] . "(" . $parameters . ")";
+        $debug_html         .= '$mysqli->query > ' . $query . "<br /><br />";
+        $mysqli             = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $result             = $mysqli->query($query);
         if (!$result) {
             if ($_SESSION["setting"]["environment"] != "live")
                 echo "<br />" . $query . "<br />Error MySQLi Query: " . $mysqli->error;
+        }
+        $aksi_end           = date('Y-m-d H:i:s');
+        $aksi_durasi        = strtotime($aksi_end) - strtotime($aksi_start);
+        $aksi_durasi_column = '';
+        $aksi_durasi_value  = '';
+        if ($aksi_durasi_exists) {
+            $debug_html .= "Column Aksi Durasi Exists -> Table rhaktivitasadmin <br /><br />";
+            $aksi_durasi_column = ",\n\t\t\t\t\taksi_durasi";
+            $aksi_durasi_value  = ",\n\t\t\t\t\t'" . $aksi_durasi . "'";
         }
         while ($data = $result->fetch_assoc()) {
             $debug_html .= '$data[' . $_SESSION["setting"]["field_flag"] . '] = ' . $data[$_SESSION["setting"]["field_flag"]] . "<br /><br />";
@@ -717,10 +815,10 @@ if ($save["mode"] == "add") {
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
-                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor,\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_reject failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "',\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
+                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_reject failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
                 set_alert(get_message(703, ucfirst($save["mode"])) . "<br />" . $data[$_SESSION["setting"]["field_message"]], "danger", "", $save["url_success"] . "&no=" . $_GET["no"]);
             }
-            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor,\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_reject success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "',\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
+            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_reject success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
         }
         $save_action = TRUE;
         $nomor       = $_GET["no"];
@@ -753,13 +851,23 @@ if ($save["mode"] == "add") {
             $parameters .= $value;
             $i++;
         }
-        $query = "CALL " . $save["sp_disapprove"] . "(" . $parameters . ")";
-        $debug_html .= '$mysqli->query > ' . $query . "<br /><br />";
-        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-        $result = $mysqli->query($query);
+        $aksi_start         = date('Y-m-d H:i:s');
+        $query              = "CALL " . $save["sp_disapprove"] . "(" . $parameters . ")";
+        $debug_html         .= '$mysqli->query > ' . $query . "<br /><br />";
+        $mysqli             = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $result             = $mysqli->query($query);
         if (!$result) {
             if ($_SESSION["setting"]["environment"] != "live")
                 echo "<br />" . $query . "<br />Error MySQLi Query: " . $mysqli->error;
+        }
+        $aksi_end           = date('Y-m-d H:i:s');
+        $aksi_durasi        = strtotime($aksi_end) - strtotime($aksi_start);
+        $aksi_durasi_column = '';
+        $aksi_durasi_value  = '';
+        if ($aksi_durasi_exists) {
+            $debug_html .= "Column Aksi Durasi Exists -> Table rhaktivitasadmin <br /><br />";
+            $aksi_durasi_column = ",\n\t\t\t\t\taksi_durasi";
+            $aksi_durasi_value  = ",\n\t\t\t\t\t'" . $aksi_durasi . "'";
         }
         while ($data = $result->fetch_assoc()) {
             $debug_html .= '$data[' . $_SESSION["setting"]["field_flag"] . '] = ' . $data[$_SESSION["setting"]["field_flag"]] . "<br /><br />";
@@ -768,10 +876,10 @@ if ($save["mode"] == "add") {
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
-                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor,\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_disapprove failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "',\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
+                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_disapprove failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
                 set_alert(get_message(703, ucfirst($save["mode"])) . "<br />" . $data[$_SESSION["setting"]["field_message"]], "danger", "", $save["url_success"] . "&no=" . $_GET["no"]);
             }
-            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor,\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_disapprove success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "',\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
+            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_disapprove success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
         }
         $save_action = TRUE;
         $nomor       = $_GET["no"];
@@ -804,13 +912,23 @@ if ($save["mode"] == "add") {
             $parameters .= $value;
             $i++;
         }
-        $query = "CALL " . $save["sp_close"] . "(" . $parameters . ")";
-        $debug_html .= '$mysqli->query > ' . $query . "<br /><br />";
-        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-        $result = $mysqli->query($query);
+        $aksi_start         = date('Y-m-d H:i:s');
+        $query              = "CALL " . $save["sp_close"] . "(" . $parameters . ")";
+        $debug_html         .= '$mysqli->query > ' . $query . "<br /><br />";
+        $mysqli             = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $result             = $mysqli->query($query);
         if (!$result) {
             if ($_SESSION["setting"]["environment"] != "live")
                 echo "<br />" . $query . "<br />Error MySQLi Query: " . $mysqli->error;
+        }
+        $aksi_end           = date('Y-m-d H:i:s');
+        $aksi_durasi        = strtotime($aksi_end) - strtotime($aksi_start);
+        $aksi_durasi_column = '';
+        $aksi_durasi_value  = '';
+        if ($aksi_durasi_exists) {
+            $debug_html .= "Column Aksi Durasi Exists -> Table rhaktivitasadmin <br /><br />";
+            $aksi_durasi_column = ",\n\t\t\t\t\taksi_durasi";
+            $aksi_durasi_value  = ",\n\t\t\t\t\t'" . $aksi_durasi . "'";
         }
         while ($data = $result->fetch_assoc()) {
             $debug_html .= '$data[' . $_SESSION["setting"]["field_flag"] . '] = ' . $data[$_SESSION["setting"]["field_flag"]] . "<br /><br />";
@@ -819,10 +937,10 @@ if ($save["mode"] == "add") {
                 if ($save["debug"] == 1)
                     $_SESSION["g.debug_html"] .= $debug_html;
                 $_SESSION["g.debug0_html"] .= $debug_html;
-                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor,\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_close failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "',\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
+                mysqli_query($con, "\n\t\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\t\tnomormhadmin,\n\t\t\t\t\tipaddress,\n\t\t\t\t\taksi_menu_kode,\n\t\t\t\t\taksi_menu_judul,\n\t\t\t\t\taksi_statement,\n\t\t\t\t\taksi_table,\n\t\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\t\tcatatan\n\t\t\t\t)\n\t\t\t\tVALUES (\n\t\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t\t'sp_close failed',\n\t\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\t\"" . $debug_html . "\"\n\t\t\t\t)");
                 set_alert(get_message(703, ucfirst($save["mode"])) . "<br />" . $data[$_SESSION["setting"]["field_message"]], "danger", "", $save["url_success"] . "&no=" . $_GET["no"]);
             }
-            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor,\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_close success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "',\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
+            mysqli_query($con, "\n\t\t\tINSERT INTO rhaktivitasadmin (\n\t\t\t\tnomormhadmin,\n\t\t\t\tipaddress,\n\t\t\t\taksi_menu_kode,\n\t\t\t\taksi_menu_judul,\n\t\t\t\taksi_statement,\n\t\t\t\taksi_table,\n\t\t\t\taksi_nomor" . $aksi_durasi_column . ",\n\t\t\t\tcatatan\n\t\t\t)\n\t\t\tVALUES (\n\t\t\t\t" . $_SESSION["login"]["nomor"] . ",\n\t\t\t\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t\t\t\t'" . $_SESSION["g.menu"] . "',\n\t\t\t\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t\t\t\t'sp_close success',\n\t\t\t\t'" . $save["table"] . "',\n\t\t\t\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\t\t\t\"" . $debug_html . "\"\n\t\t\t)");
         }
         $save_action = TRUE;
         $nomor       = $_GET["no"];
@@ -846,7 +964,17 @@ if ($save_action) {
     $statement .= " failed_attempt";
     $debug_html .= '$save_action = failed_attempt, transactions(rollback);' . "<br />" . get_message(703, ucfirst($save["mode"]));
 }
-mysqli_query($con, "\nINSERT INTO rhaktivitasadmin (\n\tnomormhadmin,\n\tipaddress,\n\taksi_menu_kode,\n\taksi_menu_judul,\n\taksi_statement,\n\taksi_table,\n\taksi_nomor,\n\tcatatan\n)\nVALUES (\n\t" . $_SESSION["login"]["nomor"] . ",\n\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t'" . $_SESSION["g.menu"] . "',\n\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t'" . $statement . "',\n\t'" . $save["table"] . "',\n\t'" . $nomor . "',\n\t\"" . $debug_html . "\"\n)");
+$aksi_start         = $_SESSION["menu_" . $_SESSION["g.menu"]]["aksi_start"];
+$aksi_end           = date('Y-m-d H:i:s');
+$aksi_durasi        = strtotime($aksi_end) - strtotime($aksi_start);
+$aksi_durasi_column = '';
+$aksi_durasi_value  = '';
+if ($aksi_durasi_exists) {
+    $debug_html .= "Column Aksi Durasi Exists -> Table rhaktivitasadmin <br /><br />";
+    $aksi_durasi_column = ",\n\taksi_durasi";
+    $aksi_durasi_value  = ",\n\t'" . $aksi_durasi . "'";
+}
+mysqli_query($con, "\nINSERT INTO rhaktivitasadmin (\n\tnomormhadmin,\n\tipaddress,\n\taksi_menu_kode,\n\taksi_menu_judul,\n\taksi_statement,\n\taksi_table,\n\taksi_nomor" . $aksi_durasi_column . ",\n\tcatatan\n)\nVALUES (\n\t" . $_SESSION["login"]["nomor"] . ",\n\t'" . $_SESSION["login"]["ipaddress"] . "',\n\t'" . $_SESSION["g.menu"] . "',\n\t'" . $_SESSION["menu_" . $_SESSION["g.menu_kode"]]["judul"] . "',\n\t'" . $statement . "',\n\t'" . $save["table"] . "',\n\t'" . $nomor . "'" . $aksi_durasi_value . ",\n\t\"" . $debug_html . "\"\n)");
 if ($save["debug"] == 2) {
     $update_catatan_debug = "\n\tUPDATE " . $save["table"] . "\n\tSET catatan = \"" . $debug_html . "\"\n\tWHERE " . $_SESSION["setting"]["field_nomor"] . " = " . $nomor;
     mysqli_query($con, $update_catatan_debug);
@@ -869,5 +997,5 @@ if ($save_action) {
 die("<meta http-equiv='refresh' content='0;URL=" . $save["url_failed"] . "'>");
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

@@ -51,7 +51,7 @@
 .ui-jqgrid .ui-jqgrid-resize {height:20px !important;position: relative; cursor :e-resize;display: inline;overflow: hidden;}
 .ui-jqgrid .ui-grid-ico-sort {overflow:hidden;position:absolute;display:inline; cursor: pointer !important;}
 .ui-jqgrid .ui-icon-asc {margin-top:-3px; height:12px;}
-.ui-jqgrid .ui-icon-desc {margin-top:3px;margin-left:-1px;height:12px;}
+.ui-jqgrid .ui-icon-desc {margin-top:3px;/*margin-left:-1px;*/height:12px;}
 .ui-jqgrid .ui-i-asc {margin-top:0;height:18px;}
 .ui-jqgrid .ui-i-desc {margin-top:0;margin-left:12px;height:18px;}
 .ui-jqgrid .ui-single-sort-asc {margin-top:-1px;height:18px;}

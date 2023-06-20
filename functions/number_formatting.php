@@ -1,2 +1,2 @@
 <?php function number_formatting($number="",$type="",$decimals="",$dec_point="",$thousands_sep=""){if(empty($number)&&$number!=0)return 0;if(empty($type))$type="number";if($type=="integer")$decimals=0;else if(empty($decimals))$decimals=$_SESSION["setting"]["decimal_".$type];if(empty($dec_point))$dec_point=$_SESSION["setting"]["separator_decimal"];if(empty($thousands_sep))$thousands_sep=$_SESSION["setting"]["separator_thousands"];return number_format($number,$decimals,$dec_point,$thousands_sep);} ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

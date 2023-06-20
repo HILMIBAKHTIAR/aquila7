@@ -1,2 +1,2 @@
 <?php function generate_function_realgrid($grid_string){$script=" function generateRealGrid() { ";if(empty($grid_string))$script.=" return true; ";else{$line_gen=" ";$igs=0;foreach($grid_string as $gs){if($igs>0){$line_gen.=" ";}$line_gen.=" generateRealGrid_".$gs."(); ";$igs++;}$line_gen.=" ";$script.=$line_gen;}$script.=" } ";return $script;} ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

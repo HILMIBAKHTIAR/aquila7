@@ -2,7 +2,7 @@
 if(!isset($page_dir))$page_dir="";?>
 <div class="row">
 	<!-- /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/ -->
-	<div id="sidebar-left" class="animated fadeIn col-xs-2 col-sm-2">
+	<div id="sidebar-left" class="col-xs-2 col-sm-2">
 		<div class="profile-menu">
 			<img src="<?php echo $page_dir?>contents/image/user/avatar.jpg" class="img-circle" alt="avatar" /><br>
 			<span class="welcome">Welcome,</span>
@@ -18,11 +18,11 @@ if(!isset($page_dir))$page_dir="";?>
 	<script language="javascript" type="text/javascript">
 		$(function()
 		{
-			$('#menu_<?php echo $_SESSION["menu_".$_SESSION["g.menu_kode"]]["kode"]?>').attr('class','animated fadeInRight active-parent active');
+			$('#menu_<?php echo $_SESSION["menu_".$_SESSION["g.menu_kode"]]["kode"]?>').attr('class','animated fadeInLeft active-parent active');
 			<?php
 		 		$header=explode("|",$_SESSION["menu_".$_SESSION["g.menu_kode"]]["daftar_header"]);
 		 		foreach($header as $kode){?>
-					$('#menu_<?php echo $kode?>').attr('class','animated fadeInRight dropdown-toggle active-parent active ');
+					$('#menu_<?php echo $kode?>').attr('class','animated fadeInLeft dropdown-toggle active-parent active ');
 					$('#dropdown_<?php echo $kode?>').attr('style','display: block;');
 				<?php
 	 		}?>
@@ -35,15 +35,15 @@ if(!isset($page_dir))$page_dir="";?>
 			<li>
 				<a href="#" class="account" data-toggle="dropdown"><i class="nc-icon nc-single-01" aria-hidden="true"></i>
 				</a>
-				<ul class="dropdown-menu animated fadeInRight">
+				<ul class="dropdown-menu animated fadeInLeft" style="width: 110px;">
 					<li>
 						<a href="?m=profil_aktif">
-							<span>Profile</span>
+							<span><i class="fa fa-user"></i> &nbsp;Profile</span>
 						</a>
 					</li>
 					<li>
 						<a href="dashboard_logout.php">
-							<span>Sign Out</span>
+							<span><i class="fa fa-sign-out"></i> Sign Out</span>
 						</a>
 					</li>
 				</ul>
@@ -165,4 +165,4 @@ setTimeout(function(){
   $('.loadbar').fadeOut(300);
 }, time);
 </script>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

@@ -20,6 +20,7 @@ if ($form_override != 1) {
     $form["string_id"] = "";
     $form["field"]     = array();
     $form_html         = "";
+    $ko_binding_html   = "";
     if (!empty($form_include))
         foreach ($form_include as $setting)
             include $setting;
@@ -81,7 +82,7 @@ if (empty($form_id) || $form_id == "field") {
                 if(!empty($field["box_tabs"])){
                 	$hide_class = 'hide';
                 }
-                $form_html .= "<div class='row animated fadeInDown form_content ".$hide_class."' name='div_A_" . $last_box_row . "'>";
+                $form_html .= "<div class='row animated fadeInRight form_content ".$hide_class."' name='div_A_" . $last_box_row . "'>";
                 /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-24;*/
             }
             if (!isset($field["box_row_class"]))
@@ -119,7 +120,9 @@ if (empty($form_id) || $form_id == "field") {
                 $form_html .= "\n\t\t\t\t<fieldset name='fieldset_G_" . $last_form_fieldset . "'>";
             }
             if (!empty($field["form_legend"])) {
-                $form_html .= "<legend>" . $field["form_legend"] . "</legend>";
+                if (!empty($field["form_legend_class"]))
+                    $form_legend_class .= $field["form_legend_class"];
+                $form_html .= "<legend class='" . $form_legend_class . "'>" . $field["form_legend"] . "</legend>";
             }
             if ($i_field == 1 || !empty($field["form_group"])) {
                 $last_form_group  = "i" . $i_field;
@@ -155,7 +158,12 @@ if (empty($form_id) || $form_id == "field") {
                 else
                     $field["input_col"] = "col-sm-4";
             }
-            $form_html .= "\n\t\t\t<div class='" . $field["input_col"] . " field_group_" . $i_field . "' name='div_I_" . $i_field . "'>";
+            $form_html .= "\n\t\t\t<div class='" . $field["input_col"] . " " . $field["input_div_class"] . " field_group_" . $i_field . "' name='div_I_" . $i_field . "'>";
+            if ($edit["uppercase"] == 1 && strpos($field["input_element"], "select") === false)
+                if (isset($field["input_attr"]["oninput"]) && !empty($field["input_attr"]["oninput"]))
+                    $field["input_attr"]["oninput"] = "upper(this);" . $field["input_attr"]["oninput"];
+                else
+                    $field["input_attr"]["oninput"] = "upper(this);";
             if (!isset($field["input_attr"]["class"]) && $field["input_element"] != "iframe")
                 $field["input_attr"]["class"] = "form-control";
             if (!empty($field["input_class"]))
@@ -185,8 +193,30 @@ if (empty($form_id) || $form_id == "field") {
             if ($field["input_element"] == "input") {
                 if (strstr($field["input_attr"]["class"], "date_1") && empty($field["input_attr"]["value"]))
                     $field["input_attr"]["value"] = date($_SESSION["setting"]["date"]);
-                if (strstr($field["input_attr"]["class"], "date_2") && empty($field["input_attr"]["value"]))
-                    $field["input_attr"]["value"] = date("d-m-Y");
+                if (strstr($field["input_attr"]["class"], "datetime_1") && empty($field["input_attr"]["value"]))
+                    $field["input_attr"]["value"] = date($_SESSION["setting"]["datetime"]);
+                if (strstr($field["input_attr"]["class"], "month_1") && empty($field["input_attr"]["value"]))
+                    $field["input_attr"]["value"] = date($_SESSION["setting"]["month"]);
+                if (strstr($field["input_attr"]["class"], "year_1") && empty($field["input_attr"]["value"]))
+                    $field["input_attr"]["value"] = date($_SESSION["setting"]["year"]);
+                if (strstr($field["input_attr"]["class"], "jqmonth_1"))
+                {
+                    $picker_class = "jqmonth_1_" . $field["input"];
+                    $field["input_attr"]["data-bind"] = "daterangepicker: " . $picker_class . ", daterangepickerFormat: \"" . $_SESSION["setting"]["jqmonth_1"] . "\", daterangepickerOptions: { periods: [\"month\"], forceUpdate:true, minDate:\"" . $_SESSION["setting"]["start_date"] . "\", maxDate:\"" . date('Y-m-d', strtotime('+10 years')) . "\", startDate: \"" . $field["input_attr"]["value"] . "\", single: true }";
+                    if(empty($ko_binding_html))
+                        $ko_binding_html = $picker_class . ": ko.observable([]),";
+                    else
+                        $ko_binding_html .= $picker_class . ": ko.observable([]),";
+                }
+                if (strstr($field["input_attr"]["class"], "jqyear_1"))
+                {
+                    $picker_class = "jqyear_1_" . $field["input"];
+                    $field["input_attr"]["data-bind"] = "daterangepicker: " . $picker_class . ", daterangepickerFormat: \"" . $_SESSION["setting"]["jqyear_1"] . "\", daterangepickerOptions: { periods: [\"year\"], forceUpdate:true, minDate:\"" . $_SESSION["setting"]["start_date"] . "\", maxDate:\"" . date('Y-m-d', strtotime('+10 years')) . "\", startDate: \"" . $field["input_attr"]["value"] . "\", single: true }";
+                    if(empty($ko_binding_html))
+                        $ko_binding_html = $picker_class . ": ko.observable([]),";
+                    else
+                        $ko_binding_html .= $picker_class . ": ko.observable([]),";
+                }
                 $form_html .= " <" . $field["input_element"];
                 foreach($field["input_attr"] as $key => $val)
                     $form_html .= " " . $key . "='" . $val . "' ";
@@ -202,6 +232,9 @@ if (empty($form_id) || $form_id == "field") {
                     $form_html .= " checked ";
                 if ($edit["mode"] == "view")
                     $form_html .= " disabled ";
+                $field["input_attr"]["class"] = str_replace("form-control", "", $field["input_attr"]["class"]);
+                foreach($field["input_attr"] as $key => $val)
+                    $form_html .= " " . $key . "='" . $val . "' ";
                 $form_html .= ">";
                 $form_html .= "<input class='checkbox_value form-control hidden' id='" . $field["input"] . "' name='" . $field["input"] . "' value='" . $field["input_attr"]["value"] . "'";
                 if ($edit["mode"] == "view")
@@ -285,6 +318,8 @@ if (empty($form_id) || $form_id == "field") {
                     include "contents/browse/" . $field["browse_setting"] . ".php";
                 if (!empty($field["browse_set"]))
                     $browse = array_merge($browse, $field["browse_set"]);
+                if (!isset($browse["id"]))
+                    $browse["id"] = $field["browse_setting"];
                 if ($form["mode"] != "view") {
                     $browse_override = 1;
                     include $config["webspira"] . "codes/browse.php";
@@ -303,10 +338,13 @@ if (empty($form_id) || $form_id == "field") {
                 if ($_SESSION["login"]["framework"] == "webspira")
                     $nbsp3 = "&nbsp;&nbsp;&nbsp;";
                 $field["additional"] = "";
+                $selected_off_class = "";
+                if ($browse["selected_mode"] == "off")
+                    $selected_off_class = "off";
                 if (isset($field['input_size']))
-                    $field["additional"] .= "<span class='cst-btn-browse' style='left:" . $field['input_size'] . "%'>";
+                    $field["additional"] .= "<span class='cst-btn-browse " . $selected_off_class . "' style='left:" . $field['input_size'] . "%'>";
                 else
-                    $field["additional"] .= "<span class='cst-btn-browse'>";
+                    $field["additional"] .= "<span class='cst-btn-browse " . $selected_off_class . "'>";
                 if ($field["input_attr"]["disabled"] != "disabled" && $field["input_attr"]["readonly"] != "readonly") {
                     $field["additional"] .= "\n\t\t\t\t\t<a class='btn btn-info btn-app-sm browse_btn_open' id='browse_" . $browse["id"] . "_open'>\n\t\t\t\t\t\t<i class='fa fa-search-plus'></i>\n\t\t\t\t\t</a>" . $nbsp3;
                     if (!empty($browse["new_url"]))
@@ -365,27 +403,59 @@ if (empty($form_id) || $form_id == "field") {
         $form_html .= "\n\t\t</div><span name='div_Ez_" . $last_box_tabs . "'></span>";
     }
     $form_html .= "\n\t</div><span name='div_Dz_" . $last_box_col . "'></span>\n\t</div><span name='div_Cz_" . $last_box_col . "'></span>\n\t</div><span name='div_Bz_" . $last_box_col . "'></span>\n\t</div><span name='div_Az_" . $last_box_row . "'></span>";
+    if ($edit["uppercase"] == 1)
+        $form_html .= "\n\t<style>input:not([autocomplete]), textarea { text-transform:uppercase }</style>";
 }
 if (empty($form_id) || $form_id == "end") {
-    $form_html .= "</form>
-                    <script type='text/javascript'>
-                        function change_checkbox_data(obj){
-                            if(obj.prop('checked')){
-                                obj.nextAll('input.checkbox_value').first().val(1);
-                            }
-                            else{
-                                obj.nextAll('input.checkbox_value').first().val(0);
-                            }
-                        }
-                        $(document).ready(function(){
-                            $('.tabs').tabs();
-                            $('input[type=\"checkbox\"]').change(function(){
-                                change_checkbox_data($(this));
-                            });
-                        });
-                    </script>";
+    $form_html .= "
+    </form>
+    <script type='text/javascript'>
+        function change_checkbox_data(obj)
+        {
+            if(obj.prop('checked'))
+                obj.nextAll('input.checkbox_value').first().val(1);
+            else
+                obj.nextAll('input.checkbox_value').first().val(0);
+        }
+        function upper(text)
+        {
+            var str     = text.selectionStart;
+            text.value  = text.value.toUpperCase();
+            text.setSelectionRange(str, str);
+        }
+        function get_position(string, subString, index) {
+          return string.split(subString, index).join(subString).length;
+        }
+        $(document).ready(function()
+        {
+            $('.tabs').tabs();
+            
+            $( \"a[href*='#tab_i'][href*='" . $_SESSION["setting"]["tab_info"] . "']\" ).click(function() 
+            {
+                $(this).closest('.tabs').siblings().hide();
+                $(this).closest('[name*=\"div_B\"]').siblings().hide();
+            });
+            
+            $( \"a:not([href*='#tab_i'][href*='" . $_SESSION["setting"]["tab_info"] . "'])[href*='#tab_i']\" ).click(function() 
+            {
+                var key = $(this).attr('href').slice(get_position($(this).attr('href'), '_', 2) + 1);
+
+                $(this).closest('.tabs').siblings().show();
+                $(this).closest('[name*=\"div_B\"]').siblings().show();
+            });
+
+            $('input[type=\"checkbox\"]').change(function()
+            {
+                change_checkbox_data($(this));
+            });
+        
+            ko.applyBindings({
+              ".$ko_binding_html."
+            });
+        });
+    </script>";
 }
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

@@ -19,7 +19,7 @@ if (!empty($_SESSION["grid_" . $_GET["id"]]["param_input"])) {
 }
 
 if (!empty($_GET["search"])) {
-	$multi_search = explode("|", $_GET["search"]);
+	$multi_search = explode(" ", $_GET["search"]);
 	$h = 0;
 	$where .= " AND ( ( (";	
 	foreach ($multi_search as $multi_keyword) {
@@ -119,5 +119,5 @@ while ($row = mysqli_fetch_array($result)) {
 echo json_encode($response);
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

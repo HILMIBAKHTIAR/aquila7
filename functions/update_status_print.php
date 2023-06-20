@@ -17,5 +17,5 @@ function update_status_print($con, $table = "", $nomor = "", $field_nomor = "", 
 }
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/
+/*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/
 ?>

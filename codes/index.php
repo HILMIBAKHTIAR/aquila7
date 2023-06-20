@@ -1,8 +1,39 @@
+<div id="modal_filter_column" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+    <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">User's Template Filter Column</h5>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>User</label>
+                    <select id="user_filter_column" name="user_filter_column">
+                    </select>
+                    <input type="text" id="menu_filter_column" name="menu" value="<?= $_SESSION["g.menu_kode"] ?>" hidden>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="reload_selected_column()" class="btn btn-success">OK</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <?php
+$sql_filtered_column = "SELECT columns
+FROM shfiltercolumnmenu a 
+WHERE a.kodeshmenu= '".$_SESSION["g.menu_kode"]."' 
+AND a.nomormhadmin = ".$_SESSION["login"]["nomor"];
+$result = mysqli_query($con, $sql_filtered_column);
+while ($row = $result->fetch_array()) {
+    $_SESSION["menu_".$_SESSION["g.menu_kode"]]["filter_selected_columns"] = explode("|", $row["columns"]);
+}
 ini_set('max_execution_time', '0');
 ini_set("memory_limit",-1);
 $paging = new Paging;
 if ($index_override != 1) {
+    $_SESSION["config"] = $config;
     $index["query_order"] = "";
     if (!empty($_GET["ob"]) && !empty($_GET["ad"]))
         $index["query_order"] = $_GET["ob"] . " " . $_GET["ad"];
@@ -34,6 +65,7 @@ if ($index_override != 1) {
     $index["footer"]        = 0;
     $index["after_table"]   = "";
     $index["url"]           = $_SESSION["g.url"];
+    $index["state"]         = $config["state"];
     $data                   = explode(".", $index_include[0]);
     $index["data"]          = $data[0] . "_data." . $data[1];
     // PARAM AJAX FOR LOAD USING AJAX OR NOT -> 1 USING AJAX 
@@ -96,12 +128,22 @@ if ($index_override != 1) {
     $index_datatable["scrollX"]             = "true";
     $index_datatable["scrollY"]             = "'35vw'";
     $index_datatable["scrollCollapse"]      = "true";
+    if ($index_type == "report")
+    {
+        $index_datatable["lengthMenu"]      = '[ [100, 250, 500, 1000, -1], [100, 250, 500, 1000, "All"] ]';
+        $index_datatable["pageLength"]      = 100;
+    }
+    if(!empty($_SESSION["setting"]["index_lengthmenu"]))
+        $index_datatable["lengthMenu"]      = $_SESSION["setting"]["index_lengthmenu"];
+    if(!empty($_SESSION["setting"]["index_pagelength"]))
+        $index_datatable["pageLength"]      = $_SESSION["setting"]["index_pagelength"];
     $index_datatable["stateSave"]           = "true";
     $index_datatable["dom"]                 = " \"<'row'<'col-sm-12 col-md-6 dt-left-button'lB><'col-sm-12 col-md-6'f>>\" +
                                                 \"<'row'<'col-sm-12'tr>>\" +
                                                 \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
-    $index_datatable["buttons"]             = "[
-        {         
+    $index_datatable["buttons"]             = "
+    [
+        /*{         
             extend  : 'colvis',
             name    : 'colvis',
             attr:  {
@@ -111,7 +153,7 @@ if ($index_override != 1) {
             text: '<i class=\"fa fa-eye\"></i>',
             filename: '" . strtoupper($_SESSION["menu_".$_GET["m"]]["title"]) . "',
             className: 'btn btn-export btn-colvis'
-        }
+        }*/
     ]";
     if($index_type == "report"){
         $index_datatable["paging"]          = "false";
@@ -122,7 +164,8 @@ if ($index_override != 1) {
             $index_datatable["dom"]         = " \"<'row'<'col-sm-12 col-md-6 dt-left-button'lB><'col-sm-12 col-md-6'>>\" +
                                                 \"<'row'<'col-sm-12'tr>>\" +
                                                 \"<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7'p>>\"";
-        $index_datatable["buttons"]         = "[
+        $index_datatable["buttons"]         = "
+        [
             {         
                 extend  : 'copy',
                 name    : 'copy',
@@ -158,27 +201,70 @@ if ($index_override != 1) {
             }
         ]";
     }
-    $index_datatable["stateSaveParams"]     = "function ( settings, data ) {
+    $index_datatable["stateSaveParams"]     = "
+    function ( settings, data ) {
       for ( var i = 0, ien = data.columns.length ; i < ien ; i++ ) {
         delete data.columns[i].visible;
       }
     }";
-    $index_datatable["initComplete"]        = "function( settings ) {
+    $index_datatable["initComplete"]        = "
+    function( settings ) {
         hideLoader();
         $( '.table-datatable' ).removeClass( 'hide' );
         $( $.fn.dataTable.tables(true) ).DataTable().columns.adjust();
-        $( '.dataTables_filter' ).append('<span class=\"bt-search\"><i class=\"fa fa-search\" aria-hidden=\"true\"></i></span>');
         var search = $(\".dataTables_filter input[type=search]\").val();
         if(search != ''){
              $(\".dataTables_filter input[type=search]\").css(\"width\", \"300px\");
         }
+        var api = this.api();
+        // For each column
+        api
+            .columns()
+            .eq(0)
+            .each(function (colIdx) {
+                // Set the header cell to contain the input element
+                var cell = $('.filters th').eq(
+                    $(api.column(colIdx).header()).index()
+                );
+                var title = $(cell).text();
+                if(title != ''){
+                    $(cell).html('"."<input type=text>"."');
+                }
+
+                // On every keypress in this input
+                $(
+                    'input',
+                    $('.filters th').eq($(api.column(colIdx).header()).index())
+                )
+                    .on('keypress', function (e) {
+                        if(e.which == 13) {
+                            // Get the search value
+                            $(this).attr('title', $(this).val());
+                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+
+                            var cursorPosition = this.selectionStart;
+                            // Search the column for that value
+                            api
+                                .column(colIdx)
+                                .search(
+                                    this.value != ''
+                                        ? regexr.replace('{search}', '(((' + this.value + ')))')
+                                        : '',
+                                    this.value != '',
+                                    this.value == ''
+                                )
+                                .draw();
+                        }
+                    });
+            });
     }";
     $index_print["function"] = "defaultPrint()";
     $index_html = "";
     if (!empty($index_include))
         foreach ($index_include as $setting)
             include $setting;
-    if($index["ajax"] == 1){
+    if($index["ajax"] == 1)
+    {
         $index_datatable["processing"] = "true";
         $index_datatable["serverSide"] = "true";
         $index_datatable["paging"]     = "true";
@@ -216,7 +302,7 @@ if ($index_type == "index") {
     }
     elseif (!empty($index["default_order"])){
         $query .= " ORDER BY " . $index["default_order"];
-        $query_order = $index["query_order"];
+        $query_order = $index["default_order"];
     }
 }
 if ($index["debug"] == 1)
@@ -273,7 +359,7 @@ if ($index_type == "index") {
 $hide_class ="";
 if($index["ajax"] == 1) 
     $hide_class = "hide";
-echo "\n<div class='row animated fadeInDown index_box_content " . $index_type . "'>\n\t<div class='col-xs-12'>\n\t\t<div class='box'>\n\t\t\t<div class='box-header'>\n\t\t\t\t<div class='box-name'>\n\t\t\t\t\t<i class='fa fa-files-o'></i>\n\t\t\t\t\t<span>" . $index["title"] . "</span>\n\t\t\t\t</div>\n\t\t\t<!--<div class='box-icons'>\n\t\t\t\t\t<a class='collapse-link'>\n\t\t\t\t\t\t<i class='fa fa-chevron-up'></i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a class='expand-link'>\n\t\t\t\t\t\t<i class='fa fa-expand'></i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a class='close-link'>\n\t\t\t\t\t\t<i class='fa fa-times'></i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>-->\n\t\t\t\t<div class='no-move'></div>\n\t\t\t</div>\n\t\t\t<div class='box-content no-padding' id='index_content'><div class=\"lds-ellipsis " . $hide_class . "\"><div></div><div></div><div></div><div></div></div>";
+echo "\n<script type='text/javascript'> url = window.location.href.split('?')[0]; url += '?m=".$_SESSION["g.menu"]."&f=".$_SESSION["g.frame"]."&';window.history.replaceState({}, '', url )</script><div class='row animated fadeInRight index_box_content " . $index_type . "'>\n\t<div class='col-xs-12'>\n\t\t<div class='box'>\n\t\t\t<div class='box-header'>\n\t\t\t\t<div class='box-name'>\n\t\t\t\t\t<i class='fa fa-files-o'></i>\n\t\t\t\t\t<span>" . $index["title"] . "</span>\n\t\t\t\t</div>\n\t\t\t<!--<div class='box-icons'>\n\t\t\t\t\t<a class='collapse-link'>\n\t\t\t\t\t\t<i class='fa fa-chevron-up'></i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a class='expand-link'>\n\t\t\t\t\t\t<i class='fa fa-expand'></i>\n\t\t\t\t\t</a>\n\t\t\t\t\t<a class='close-link'>\n\t\t\t\t\t\t<i class='fa fa-times'></i>\n\t\t\t\t\t</a>\n\t\t\t\t</div>-->\n\t\t\t\t<div class='no-move'></div>\n\t\t\t</div>\n\t\t\t<div class='box-content no-padding' id='index_content'><div class=\"lds-ellipsis " . $hide_class . "\"><div></div><div></div><div></div><div></div></div>";
 if ($_SESSION["login"]["framework"] == "webspira") {
     if ($index_type == "index") {
         echo "\n\t\t\t\t<div class='box-content'>";
@@ -347,7 +433,7 @@ if($index["ajax"] == 1) {
                                     if($i >= $startSpan && $i <= $endSpan){
                                         echo "<th></th>";
                                         $isBelowColspan = 1;
-                                        break 3;
+                                        break;
                                     }
 
                                 }
@@ -388,14 +474,15 @@ if($index["ajax"] == 1) {
     }
     echo "\n\t\t</tr>\n\t</thead>\n\t<tbody>";
     echo "\n\t</tbody>";
-    if(isset($index["query_from"]) AND !empty($index["query_from"])){
-        $mysqli = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
-        $sqlfooter    = $query;
-        if ($index_type == "report"){
+    if(isset($query) AND !empty($query)) {
+        $config["state"]= $index["state"];
+        include "config/database.php";
+        $mysqli         = new mysqli($mysql["server"], $mysql["username"], $mysql["password"], $mysql["database"]);
+        $sqlfooter      = $query;
+        if ($index_type == "report") {
             $sqlfooter  = str_replace('footer','1', $sqlfooter);
             $sqlfooter  = str_replace('start','0', $sqlfooter);
             $sqlfooter  = str_replace('limit','18446744073709551615', $sqlfooter);
-
         }
         $result = $mysqli->query($sqlfooter);
         if (!$result) {
@@ -426,7 +513,7 @@ if ($_SESSION["login"]["framework"] == "webspira")
     $br_br_br = "<br /><br /><br />";
 echo "<div class=\"box-content no-padding\" id=\"index_after_table\">\n\t\t\t\t\t" . $index["after_table"] . "\n\t\t\t\t</div>\n\t\t\t\t" . $br3 . "\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</div>";
 
-// Print 
+// PRINT
 $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["config"]       = $config;
 $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["ajax"]         = $index["ajax"];   
 $_SESSION["menu_" . $_SESSION["g.menu"]]["print"]["index_type"]   = $index_type;
@@ -439,18 +526,25 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
             <?php 
                 if($index["ajax"] == 1){
                     echo " 
-                        var query_select = \"".$query_select."\";
-                        var query_where  = \"".$query_where."\";
-                        var query_order  = \"".$query_order."\";
-                        var fields       = '".json_encode($fields)."';
-                        var server       = '".json_encode($mysql)."';
-                        var index_type   = \"".$index_type."\";
-                        var index_table  = '".json_encode($index_table)."';
+                        var query_select = '".addslashes($query_select)."';
+                        var query_where  = '".addslashes($query_where)."';
+                        var query_order  = '".addslashes($query_order)."';
+                        var fields       = '".addslashes(json_encode($fields))."';
+                        var server       = '".addslashes(json_encode($mysql))."';
+                        var state        = '".$index["state"]."';
+                        var index_type   = '".addslashes($index_type)."';
+                        var index_table  = '".addslashes(json_encode($index_table))."';
                         var index_data   = '../../".$config["project"].$index["data"]."';
                         var database     = '../../".$config["project"]."config/database.php';
                     ";
                 }
             ?>
+
+            $('#table_index thead tr')
+            .clone(true)
+            .addClass('filters')
+            .appendTo('#table_index thead');
+
             var table = $(".table-datatable").DataTable({ 
                 <?php 
                     foreach($index_datatable as $key => $val)
@@ -467,16 +561,17 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                                 $index_table["column"][$key]["search"] == 1 ? $orderable = 'true' : $orderable = 'false';
                             }
                         }
-                        $alignClass = $index_table["column"][$key]["align"];
+                        $align = $index_table["column"][$key]["align"];
+                        $index_table["column"][$key]["name"] == "action" && empty($align) ? $align = 'center' : $align;
                         empty($index_table["column"][$key]["width"]) ? $width = 0 : $width = $index_table["column"][$key]["width"];
                         isset($index_table["column"][$key]["visible"]) ? $visible = $index_table["column"][$key]["visible"] : $visible = 'true';
-                        echo "{ \"targets\": " . $key . ", \"className\": '" . $alignClass . "', \"visible\": " . $visible . ", \"orderable\":" . $orderable . ", \"width\": " . $width . "},";
+                        echo "{ \"targets\": " . $key . ", \"className\": '" . $align . "', \"visible\": " . $visible . ", \"orderable\":" . $orderable . ", \"width\": " . $width . "},";
                     }
-                    echo "],";
+                    echo "],orderCellsTop: true,";
 
                     if($index["ajax"] == 1){
                         echo "ajax:{
-                                url :'".$config["webspira"]."codes/ajax-grid-data.php',
+                                url :'".$config["webspira"]."codes/ajax_grid.php',
                                 type: 'post',
                                 data: {
                                         query_select:query_select,
@@ -484,6 +579,7 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                                         query_order:query_order,
                                         fields:fields,
                                         server:server,
+                                        state:state,
                                         index_type:index_type,
                                         index_table:index_table,
                                         index_data:index_data,
@@ -526,6 +622,12 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
                     $( '.buttons-columnVisibility:has(span:empty)' ).css('display', 'none');
                 }
             });
+            $('#table_index_filter input').unbind();
+            $('#table_index_filter input').bind('keyup', function(e) {
+                if(e.keyCode == 13) {
+                    table.search(this.value).draw();   
+                }
+            });
     };
     function reDrawDataTable(){
         $(".table-datatable").DataTable().columns.adjust().draw(false);
@@ -541,5 +643,5 @@ if ($_SESSION["login"]["framework"] == "pelangi") { ?>
 <?php 
 ?>
 <?php
-/*created_by:patricklipesik@gmail.com,release_date:2019-12-16*/
+/*created_by:glennferio@inspiraworld.com,release_date:2019-12-16*/
 ?>

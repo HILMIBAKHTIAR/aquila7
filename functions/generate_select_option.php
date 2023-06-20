@@ -1,2 +1,2 @@
 <?php function generate_select_option($query,$field_id,$field_visible){$data=mysqli_query($con, $query);$i=0;while($d=mysqli_fetch_array($data)){$fields=explode("|",$field_visible);$visible="";$j=0;foreach($fields as $field){if($j>0)$visible.=" ";$visible.=$d[$field];$j++;}$option[$i]=$d[$field_id]."|".$visible;$i++;}return $option;} ?>
-<?php /*created_by:patricklipesik@gmail.com;release_date:2020-05-09;*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com;release_date:2020-05-09;*/ ?>

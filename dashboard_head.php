@@ -43,8 +43,10 @@
 <?php }?>
 		<link href="<?php echo $page_dir?>assets_custom/css/style_custom.css?<?php echo date("H:i:s");?>" rel="stylesheet" />
 	<!--<link href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/chartist/chartist.min.css" rel="stylesheet" />-->
-		
+		<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/jquery.min.js"></script>
+		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/knockout.js"></script>
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui/jquery-ui.js"></script>
 <!------start all compiled plugins--------------------------------------------------------------------------------------------------------------------------------------------------->
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/bootstrap/bootstrap.min.js"></script>
@@ -67,23 +69,37 @@
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/jquery.number.js" type="text/javascript"></script>
 		<!-- /*START edited_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/ -->
 		<script src="<?php echo $config['webspira']?>assets_dashboard/plugins/moment/moment.min.js?<?php echo date("H:i:s");?>"></script>
-		<!-- DATE TIME PICKER -->
+		<!-- BOOTSTRAP DATE TIME PICKER -->
 		<link rel="stylesheet"
 	          type="text/css"
 	          href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/css/bootstrap-datetimepicker.min.css"/>
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/bootstrap-datetimepicker.min.js"></script>
-		<!-- DATE TIME PICKER -->
-		<!-- Jquery CONFIRM -->
+		<!-- BOOTSTRAP DATE TIME PICKER -->
+		<!-- JQUERY CONFIRM -->
 	    <script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/popper.js"></script>
 	    <link rel="stylesheet"
 	          type="text/css"
 	          href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/css/jquery-confirm.css"/>
 	   	<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/jquery-confirm.js"></script>
-	   	<!-- Jquery CONFIRM -->
-	   	<!-- Jquery CLOCK PICKER -->
-		<link rel="stylesheet" type="text/css" href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/css/jquery-clockpicker.css">
-		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/jquery-clockpicker.js"></script>
-		<!-- Jquery CLOCK PICKER -->
+	   	<!-- JQUERY CONFIRM -->
+	   	<!-- JQUERY CLOCK PICKER -->
+		<!-- <link rel="stylesheet" type="text/css" href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/css/jquery-clockpicker.css">
+		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/jquery-clockpicker.js"></script> -->
+		<!-- JQUERY CLOCK PICKER -->
+		<!-- JQUERY PERIOD PICKER -->
+		<link rel="stylesheet" type="text/css" href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui-periodpicker/jquery.periodpicker.css">
+		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui-periodpicker/jquery.periodpicker.js"></script>
+		<link rel="stylesheet" type="text/css" href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui-periodpicker/jquery.timepicker.css">
+		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui-periodpicker/jquery.timepicker.js"></script>
+		<!-- JQUERY PERIOD PICKER -->
+		<!-- JQUERY RANGE PICKER -->
+		<link rel="stylesheet" type="text/css" href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui-rangepicker/daterangepicker.css">
+		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui-rangepicker/daterangepicker.js"></script>
+		<!-- JQUERY RANGE PICKER -->
+		<!-- JQUERY COLOR PICKER -->
+		<link rel="stylesheet" type="text/css" href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui-colorpicker/spectrum.css">
+		<script type="text/javascript" src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/plugins/jquery-ui-colorpicker/spectrum.js"></script>
+		<!-- JQUERY COLOR PICKER -->
 		<!-- /*END added_by:glennferio@inspiraworld.com;last_updated:2020-05-20;*/ -->
 <?php if($_SESSION["login"]["framework"]=="pelangi"){?>
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/jquery.inputmask.js" type="text/javascript"></script>
@@ -103,6 +119,7 @@
 		<?php $ws=explode("/",$page_dir.$config["webspira"]);?>
 		<script>var page_dir_config_webspira = '<?php echo $ws[1]?>';</script>
 		<script src="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/js/devoops.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!--[if lt IE 9]>
 				<script src="http://getbootstrap.com/docs-assets/js/html5shiv.js"></script>
@@ -120,4 +137,4 @@
 		<link href="<?php echo $page_dir.$config["webspira"]?>assets_dashboard/css/<?php echo $config["style"]?>" rel="stylesheet" />
 		<?php include $page_dir.$config["webspira"]."dashboard_java.php";?>
 <?php }?>
-<?php /*created_by:patricklipesik@gmail.com,release_date:2019-12-16*/ ?>
+<?php /*created_by:glennferio@inspiraworld.com,release_date:2019-12-16*/ ?>
